@@ -380,8 +380,17 @@ export default function ApplicationTrackerPage() {
               {/* Timeline */}
               <div className="mb-4">
                 <ApplicationTimeline
-                  timeline={application.timeline}
-                  currentStatus={application.status}
+                  steps={application.timeline.map(item => ({
+                    label: item.status === 'applied' ? 'आवेदन' :
+                           item.status === 'under_review' ? 'मिला' :
+                           item.status === 'approved' ? 'स्वीकृत' :
+                           item.status === 'rejected' ? 'अस्वीकृत' : item.status,
+                    date: new Date(item.date).toLocaleDateString("hi-IN", {
+                      day: "numeric",
+                      month: "short"
+                    }),
+                    status: item.status === application.status ? "active" : "completed"
+                  }))}
                 />
               </div>
 
