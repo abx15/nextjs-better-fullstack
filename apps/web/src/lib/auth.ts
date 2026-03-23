@@ -1,9 +1,23 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "@full-stack-nextjs/db";
 import NextAuth from "next-auth";
+import type { DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
+import bcrypt from "bcryptjs";
+
+// Extend the built-in session type
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      role: string;
+      isPremium: boolean;
+      language: string;
+    } & DefaultSession["user"];
+  }
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -28,21 +42,41 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        // Add your own authentication logic here
-        // This is a placeholder - implement proper password validation
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
 
-        // Example: Replace with your actual user lookup and password verification
-        // const user = await db.query.users.findFirst({
-        //   where: eq(users.email, credentials.email),
-        // });
-        // if (user && await verifyPassword(credentials.password, user.password)) {
-        //   return { id: user.id, email: user.email, name: user.name };
-        // }
+        // Find user by email or phone
+        const user = await prisma.user.findFirst({
+          where: {
+            OR: [
+              { email: credentials.email as string },
+              { phone: credentials.email as string }
+            ]
+          },
+        });
 
-        return null;
+        if (!user || !user.password) {
+          return null;
+        }
+
+        // Verify password
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password as string,
+          user.password
+        );
+
+        if (!isPasswordValid) {
+          return null;
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          phone: user.phone,
+          image: user.image,
+        };
       },
     }),
   ],
@@ -50,15 +84,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/login",
   },
   callbacks: {
-    async session({ session, user, token }) {
-      if (session.user) {
-        session.user.id = user?.id ?? token?.sub ?? "";
+    async session({ session, user }) {
+      if (session.user && user) {
+        session.user.id = user.id;
       }
       return session;
     },
     async jwt({ token, user }) {
       if (user) {
-        token.sub = user.id;
+        token.id = user.id;
       }
       return token;
     },

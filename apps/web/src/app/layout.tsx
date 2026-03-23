@@ -1,24 +1,30 @@
 import type { Metadata } from "next";
-
-import { Geist, Geist_Mono } from "next/font/google";
-
+import { Inter, Noto_Sans_Devanagari } from "next/font/google";
 import "../index.css";
-import Header from "@/components/header";
 import Providers from "@/components/providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const notoDevanagari = Noto_Sans_Devanagari({
+  variable: "--font-hindi",
+  subsets: ["devanagari"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "full-stack-nextjs",
-  description: "full-stack-nextjs",
+  title: "SarkariSaathi — सरकारी योजनाएं अब आसान",
+  description:
+    "Find government schemes made for YOU — in 2 minutes, for free. AI-powered scheme finder for Indian citizens. सरकारी योजनाओं को खोजें, समझें और आवेदन करें।",
+  keywords: [
+    "sarkari yojana",
+    "government schemes",
+    "PM KISAN",
+    "Ayushman Bharat",
+    "सरकारी योजना",
+  ],
 };
 
 export default function RootLayout({
@@ -27,14 +33,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Providers>
-          <div className="grid grid-rows-[auto_1fr] h-svh">
-            <Header />
-            {children}
-          </div>
-        </Providers>
+    <html lang="hi" suppressHydrationWarning>
+      <body
+        className={`${inter.variable} ${notoDevanagari.variable} antialiased`}
+      >
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

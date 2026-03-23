@@ -1,0 +1,166 @@
+model UserProfile {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  state             String
+  district          String
+  pincode           String?
+  age               Int
+  gender            String
+  caste             String   @default("general")
+  religion          String?
+  annualIncome      Int      @default(0)
+  bplCard           Boolean  @default(false)
+  rationCardType    String?
+  occupation        String   @default("other")
+  landHolding       Float?
+  isDisabled        Boolean  @default(false)
+  disabilityPercent Int?
+  isWidow           Boolean  @default(false)
+  isSeniorCitizen   Boolean  @default(false)
+  isMinority        Boolean  @default(false)
+  isStudying        Boolean  @default(false)
+  educationLevel    String?
+  isProfileComplete Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model FamilyMember {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String
+  relation   String
+  age        Int
+  gender     String
+  occupation String?
+  isStudent  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model Scheme {
+  id                  String    @id @default(cuid())
+  slug                String    @unique
+  nameHindi           String
+  nameEnglish         String
+  descriptionHindi    String    @db.Text
+  descriptionEnglish  String    @db.Text
+  category            String
+  subcategory         String?
+  level               String    @default("central")
+  state               String?
+  ministry            String
+  ministryHindi       String
+  benefitType         String
+  benefitAmount       String?
+  benefitAmountHindi  String?
+  maxBenefit          Float?
+  eligibilityCriteria Json      @default("{}")
+  documentsRequired   Json      @default("[]")
+  applicationMode     String    @default("both")
+  applicationUrl      String?
+  offlineProcess      String?   @db.Text
+  offlineProcessHindi String?   @db.Text
+  deadline            DateTime?
+  isOngoing           Boolean   @default(true)
+  difficulty          String    @default("medium")
+  tags                String[]  @default([])
+  totalBeneficiaries  Int?
+  viewCount           Int       @default(0)
+  applyCount          Int       @default(0)
+  isActive            Boolean   @default(true)
+  isVerified          Boolean   @default(true)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  applications Application[]
+  savedBy      SavedScheme[]
+}
+
+model Application {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  schemeId        String
+  scheme          Scheme   @relation(fields: [schemeId], references: [id])
+  status          String   @default("applied")
+  referenceNo     String?
+  notes           String?  @db.Text
+  rejectionReason String?
+  timeline        Json     @default("[]")
+  appliedAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model SavedScheme {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  schemeId String
+  scheme   Scheme   @relation(fields: [schemeId], references: [id])
+  savedAt  DateTime @default(now())
+  @@unique([userId, schemeId])
+}
+
+model UserDocument {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String
+  type       String
+  fileUrl    String
+  fileKey    String
+  uploadedAt DateTime @default(now())
+}
+
+model Reminder {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  titleHindi String
+  message   String   @db.Text
+  messageHindi String @db.Text
+  dueDate   DateTime
+  isRead    Boolean  @default(false)
+  isSent    Boolean  @default(false)
+  schemeId  String?
+  createdAt DateTime @default(now())
+}
+
+model ChatSession {
+  id        String        @id @default(cuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String?
+  language  String        @default("hi")
+  messages  ChatMessage[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model ChatMessage {
+  id        String      @id @default(cuid())
+  sessionId String
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role      String
+  content   String      @db.Text
+  createdAt DateTime    @default(now())
+}
+
+model CscOperator {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  centerName    String
+  cscId         String   @unique
+  state         String
+  district      String
+  address       String
+  isVerified    Boolean  @default(false)
+  totalEarnings Float    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
