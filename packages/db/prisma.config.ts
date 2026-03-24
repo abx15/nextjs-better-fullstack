@@ -1,17 +1,21 @@
 import dotenv from "dotenv";
 import path from "node:path";
-import { defineConfig, env } from "prisma/config";
+import { defineConfig } from "prisma/config";
 
+// Load .env from web app
 dotenv.config({
-  path: "../../apps/web/.env",
+  path: path.resolve(__dirname, "../../apps/web/.env"),
 });
 
+// Fallback to local .env
+dotenv.config();
+
 export default defineConfig({
-  schema: path.join("prisma", "schema"),
+  schema: path.join("prisma", "schema.prisma"),
   migrations: {
     path: path.join("prisma", "migrations"),
   },
   datasource: {
-    url: env("DATABASE_URL"),
+    url: process.env.DATABASE_URL!,
   },
 });

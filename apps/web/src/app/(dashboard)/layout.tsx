@@ -1,39 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import LanguageToggle from "@/components/sarkari/language-toggle";
 import ReminderBell from "@/components/sarkari/reminder-bell";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { useLanguage } from "@/contexts/language-context";
 
 const sidebarItems = [
-  { href: "/dashboard", icon: "🏠", label: "डैशबोर्ड" },
-  { href: "/finder", icon: "🔍", label: "योजना खोजें" },
-  { href: "/chat", icon: "💬", label: "AI साथी" },
-  { href: "/my-schemes", icon: "📋", label: "मेरी योजनाएं" },
-  { href: "/tracker", icon: "📊", label: "आवेदन ट्रैकर" },
-  { href: "/family", icon: "👨‍👩‍👧", label: "परिवार" },
-  { href: "/documents", icon: "📄", label: "दस्तावेज़" },
-  { href: "/reminders", icon: "🔔", label: "रिमाइंडर" },
-  { href: "/nearby", icon: "📍", label: "नज़दीकी मदद" },
-  { href: "/settings", icon: "⚙️", label: "सेटिंग" },
+  { href: "/dashboard", icon: "🏠", labelKey: "dashboard" },
+  { href: "/finder", icon: "🔍", labelKey: "finder" },
+  { href: "/chat", icon: "💬", labelKey: "aiAssistant" },
+  { href: "/my-schemes", icon: "📋", labelKey: "mySchemes" },
+  { href: "/tracker", icon: "📊", labelKey: "applicationTracker" },
+  { href: "/family", icon: "👨‍👩‍👧", labelKey: "family" },
+  { href: "/documents", icon: "📄", labelKey: "documents" },
+  { href: "/reminders", icon: "🔔", labelKey: "reminders" },
+  { href: "/nearby", icon: "📍", labelKey: "nearby" },
+  { href: "/settings", icon: "⚙️", labelKey: "settings" },
 ];
 
 const bottomNavItems = [
-  { href: "/dashboard", icon: "🏠", label: "Home" },
-  { href: "/finder", icon: "🔍", label: "Finder" },
-  { href: "/chat", icon: "💬", label: "Chat" },
-  { href: "/tracker", icon: "📊", label: "Tracker" },
-  { href: "/more", icon: "☰", label: "More" },
+  { href: "/dashboard", icon: "🏠", labelKey: "mobileHome" },
+  { href: "/finder", icon: "🔍", labelKey: "mobileFinder" },
+  { href: "/chat", icon: "💬", labelKey: "mobileChat" },
+  { href: "/tracker", icon: "📊", labelKey: "mobileTracker" },
+  { href: "/more", icon: "☰", labelKey: "mobileMore" },
 ];
 
 export default function DashboardLayout({
@@ -42,7 +34,9 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -76,9 +70,9 @@ export default function DashboardLayout({
             {sidebarItems.map((item) => {
               const isActive = pathname === `/dashboard${item.href === "/dashboard" ? "" : item.href}`;
               return (
-                <Link
+                <a
                   key={item.href}
-                  href={`/dashboard${item.href === "/dashboard" ? "" : item.href}`}
+                  href={`/dashboard${item.href === "/dashboard" ? "" : item.href}` as any}
                   className={cn(
                     "group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors",
                     isActive
@@ -87,8 +81,8 @@ export default function DashboardLayout({
                   )}
                 >
                   <span className="mr-3 text-lg">{item.icon}</span>
-                  {item.label}
-                </Link>
+                  {t(item.labelKey)}
+                </a>
               );
             })}
           </div>
@@ -96,13 +90,13 @@ export default function DashboardLayout({
           {/* Bottom Section */}
           <div className="px-2 pb-4 space-y-2">
             {/* Premium CTA */}
-            <Link
+            <a
               href="/premium"
               className="group flex items-center px-2 py-2 text-sm font-medium rounded-md bg-[#FF6B00] text-white hover:bg-[#FF6B00]/90 transition-colors"
             >
               <span className="mr-3 text-lg">👑</span>
               Premium लें
-            </Link>
+            </a>
 
             {/* Logout */}
             <button className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors w-full">
@@ -164,9 +158,9 @@ export default function DashboardLayout({
             {sidebarItems.map((item) => {
               const isActive = pathname === `/dashboard${item.href === "/dashboard" ? "" : item.href}`;
               return (
-                <Link
+                <a
                   key={item.href}
-                  href={`/dashboard${item.href === "/dashboard" ? "" : item.href}`}
+                  href={`/dashboard${item.href === "/dashboard" ? "" : item.href}` as any}
                   onClick={() => setSidebarOpen(false)}
                   className={cn(
                     "group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors",
@@ -176,22 +170,22 @@ export default function DashboardLayout({
                   )}
                 >
                   <span className="mr-3 text-lg">{item.icon}</span>
-                  {item.label}
-                </Link>
+                  {t(item.labelKey)}
+                </a>
               );
             })}
           </div>
 
           {/* Bottom Section */}
           <div className="px-2 pb-4 space-y-2">
-            <Link
+            <a
               href="/premium"
               onClick={() => setSidebarOpen(false)}
               className="group flex items-center px-2 py-2 text-sm font-medium rounded-md bg-[#FF6B00] text-white hover:bg-[#FF6B00]/90 transition-colors"
             >
               <span className="mr-3 text-lg">👑</span>
               Premium लें
-            </Link>
+            </a>
 
             <button className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors w-full">
               <span className="mr-3 text-lg">🚪</span>
@@ -218,11 +212,11 @@ export default function DashboardLayout({
                   </svg>
                 </button>
                 <h1 className="text-lg font-semibold text-gray-900">
-                  {pathname === "/dashboard" && "डैशबोर्ड"}
-                  {pathname === "/dashboard/finder" && "योजना खोजें"}
-                  {pathname === "/dashboard/chat" && "AI साथी"}
-                  {pathname === "/dashboard/tracker" && "आवेदन ट्रैकर"}
-                  {pathname === "/dashboard/my-schemes" && "मेरी योजनाएं"}
+                  {pathname === "/dashboard" && t("dashboard")}
+                  {pathname === "/dashboard/finder" && t("finder")}
+                  {pathname === "/dashboard/chat" && t("aiAssistant")}
+                  {pathname === "/dashboard/tracker" && t("applicationTracker")}
+                  {pathname === "/dashboard/my-schemes" && t("mySchemes")}
                 </h1>
               </div>
 
@@ -232,27 +226,36 @@ export default function DashboardLayout({
                 <ReminderBell />
                 
                 {/* User Avatar Dropdown */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                      <div className="h-8 w-8 rounded-full bg-[#1a3a6b] flex items-center justify-center">
-                        <span className="text-white text-sm font-medium">R</span>
-                      </div>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="end" forceMount>
-                    <DropdownMenuItem asChild>
-                      <Link href="/dashboard/profile">प्रोफाइल</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/dashboard/settings">सेटिंग</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-red-600">
-                      लॉगआउट
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="relative">
+                  <button 
+                    onClick={() => setShowDropdown(!showDropdown)}
+                    className="relative h-8 w-8 rounded-full hover:bg-gray-100 transition-colors"
+                  >
+                    <div className="h-8 w-8 rounded-full bg-[#1a3a6b] flex items-center justify-center">
+                      <span className="text-white text-sm font-medium">R</span>
+                    </div>
+                  </button>
+                  {showDropdown && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                      <a
+                        href="/dashboard/profile"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        {t("profile")}
+                      </a>
+                      <a
+                        href="/dashboard/settings"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        {t("settings")}
+                      </a>
+                      <div className="border-t border-gray-200" />
+                      <button className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                        {t("logout")}
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -269,9 +272,9 @@ export default function DashboardLayout({
             {bottomNavItems.map((item) => {
               const isActive = pathname === `/dashboard${item.href === "/dashboard" ? "" : item.href}`;
               return (
-                <Link
+                <a
                   key={item.href}
-                  href={`/dashboard${item.href === "/dashboard" ? "" : item.href}`}
+                  href={`/dashboard${item.href === "/dashboard" ? "" : item.href}` as any}
                   className={cn(
                     "flex flex-col items-center justify-center gap-1 px-3 py-2 text-xs transition-colors",
                     isActive
@@ -285,8 +288,8 @@ export default function DashboardLayout({
                   )}>
                     {item.icon}
                   </span>
-                  <span className="text-xs">{item.label}</span>
-                </Link>
+                  <span className="text-xs">{t(item.labelKey)}</span>
+                </a>
               );
             })}
           </div>

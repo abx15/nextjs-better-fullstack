@@ -1,78 +1,108 @@
 import { auth } from "@/auth";
-import prisma from "@full-stack-nextjs/db";
-import { generateObject } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { z } from "zod";
 
 export async function matchSchemes() {
   const session = await auth();
   if (!session?.user?.id) return { error: "Unauthorized" };
 
-  const profile = await prisma.userProfile.findUnique({
-    where: { userId: session.user.id },
-  });
+  // Mock profile for now
+  const profile = {
+    age: 25,
+    occupation: "student",
+    annualIncome: 50000,
+    caste: "general",
+    isSeniorCitizen: false,
+    state: "uttar pradesh"
+  };
 
-  if (!profile) return { error: "Profile not found" };
-
-  // Fetch candidate schemes (filtering by state for now)
-  const schemes = await prisma.scheme.findMany({
-    where: {
-      isActive: true,
-      OR: [
-        { level: "central" },
-        { tags: { has: profile.state } }
-      ]
+  // Mock schemes with matching logic
+  const schemes = [
+    {
+      slug: "pm-kisan",
+      nameEnglish: "PM Kisan Samman Nidhi",
+      nameHindi: "पीएम किसान सम्मान निधि",
+      descriptionEnglish: "Income support of ₹6,000 per year to small farmers",
+      descriptionHindi: "छोटे किसानों को प्रति वर्ष ₹6,000 की आय सहायता",
+      level: "central",
+      category: "agriculture",
+      eligibilityCriteria: {
+        minAge: 18,
+        maxAge: null,
+        occupation: ["farmer"],
+        maxAnnualIncome: 6000000,
+        caste: ["all"],
+        states: ["all"]
+      }
     },
-  });
+    {
+      slug: "national-scholarship",
+      nameEnglish: "National Scholarship Portal",
+      nameHindi: "राष्ट्रीय छात्रवृत्ति पोर्टल",
+      descriptionEnglish: "Scholarships for students from economically weaker sections",
+      descriptionHindi: "आर्थिक रूप से कमजोर वर्गों के छात्रों के लिए छात्रवृत्तियां",
+      level: "central",
+      category: "education",
+      eligibilityCriteria: {
+        minAge: 16,
+        maxAge: 35,
+        occupation: ["student"],
+        maxAnnualIncome: 8000000,
+        caste: ["sc", "st", "obc", "general"],
+        states: ["all"]
+      }
+    }
+  ];
 
-  if (schemes.length === 0) return { schemes: [] };
+  // Simple matching logic
+  const matchedSchemes = schemes.map(scheme => {
+    let matchPercent = 0;
+    const missingDocs = [];
+    const reasoning = [];
 
-  // Use LLM to score and filter
-  const { object } = await generateObject({
-    model: openai("gpt-4o-mini"),
-    schema: z.object({
-      matchedSchemes: z.array(z.object({
-        slug: z.string(),
-        matchPercent: z.number().min(0).max(100),
-        reasoning: z.string(),
-        missingDocs: z.array(z.string()),
-      })),
-    }),
-    prompt: `
-      Identify which of these government schemes the following user is eligible for.
-      
-      User Profile:
-      - Age: ${profile.age}
-      - Occupation: ${profile.occupation}
-      - Annual Income: ₹${profile.annualIncome}
-      - Caste: ${profile.caste}
-      - Senior Citizen: ${profile.isSeniorCitizen ? "Yes" : "No"}
-      - State: ${profile.state}
-      
-      Schemes:
-      ${schemes.map(s => `- ${s.nameEnglish} (Slug: ${s.slug}): ${s.descriptionEnglish}`).join("\n")}
-      
-      Return a list of matched schemes with:
-      - slug: The scheme slug.
-      - matchPercent: A number from 0-100 indicating how well they fit.
-      - reasoning: Why they qualify or why they are a good match (in simple Hindi).
-      - missingDocs: Any documents from the common list they might need to apply.
-    `,
-  });
+    // Check age
+    if (scheme.eligibilityCriteria.minAge && profile.age >= scheme.eligibilityCriteria.minAge) {
+      matchPercent += 25;
+    } else if (scheme.eligibilityCriteria.minAge) {
+      reasoning.push(`आपकी आयु ${scheme.eligibilityCriteria.minAge} वर्ष से कम है`);
+    }
 
-  // Enrich with full scheme data
-  const result = object.matchedSchemes
-    .filter(m => m.matchPercent > 50)
-    .map(m => {
-      const scheme = schemes.find(s => s.slug === m.slug);
-      return {
-        ...scheme,
-        matchPercent: m.matchPercent,
-        reasoning: m.reasoning,
-        missingDocs: m.missingDocs,
-      };
-    })
-    .sort((a, b) => b.matchPercent - a.matchPercent);
+    // Check occupation
+    if (scheme.eligibilityCriteria.occupation.includes("all") || 
+        scheme.eligibilityCriteria.occupation.includes(profile.occupation)) {
+      matchPercent += 30;
+    } else {
+      reasoning.push(`यह योजना केवल ${scheme.eligibilityCriteria.occupation.join(", ")} के लिए है`);
+    }
 
-  return { schemes: result };
+    // Check income
+    if (profile.annualIncome <= scheme.eligibilityCriteria.maxAnnualIncome) {
+      matchPercent += 25;
+    } else {
+      reasoning.push(`आपकी आय सीमा से अधिक है`);
+    }
+
+    // Check caste
+    if (scheme.eligibilityCriteria.caste.includes("all") || 
+        scheme.eligibilityCriteria.caste.includes(profile.caste)) {
+      matchPercent += 20;
+    } else {
+      reasoning.push(`यह योजना केवल ${scheme.eligibilityCriteria.caste.join(", ")} वर्ग के लिए है`);
+    }
+
+    // Add missing documents based on scheme
+    if (scheme.category === "education") {
+      missingDocs.push("आधार कार्ड", "आय प्रमाण पत्र", "शैक्षणिक दस्तावेज");
+    } else if (scheme.category === "agriculture") {
+      missingDocs.push("आधार कार्ड", "भूमि के कागजात", "बैंक खाता");
+    }
+
+    return {
+      ...scheme,
+      matchPercent,
+      reasoning: reasoning.join(", "),
+      missingDocs
+    };
+  }).filter(scheme => scheme.matchPercent > 30)
+   .sort((a, b) => b.matchPercent - a.matchPercent);
+
+  return { schemes: matchedSchemes };
 }

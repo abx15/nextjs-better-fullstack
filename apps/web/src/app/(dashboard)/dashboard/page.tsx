@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import SchemeCard from "@/components/sarkari/scheme-card";
 import StatsCard from "@/components/sarkari/stats-card";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/contexts/language-context";
 
 export default function DashboardPage() {
+  const { t, language } = useLanguage();
   const [matchedSchemes, setMatchedSchemes] = useState<any[]>([]);
   const [stats, setStats] = useState({
     total: 0,
@@ -25,7 +27,7 @@ export default function DashboardPage() {
     // Fetch dashboard data
     const fetchDashboardData = async () => {
       try {
-        const response = await fetch("/api/dashboard");
+        const response = await fetch(`/api/dashboard?lang=${language}`);
         const data = await response.json();
         
         setStats(data.stats || {
@@ -85,23 +87,27 @@ export default function DashboardPage() {
     };
 
     fetchDashboardData();
-  }, []);
+  }, [language]);
 
-  const formatDateInHindi = () => {
+  const formatDate = () => {
     const options: Intl.DateTimeFormatOptions = { 
       weekday: 'long', 
       year: 'numeric', 
       month: 'long', 
       day: 'numeric' 
     };
-    const date = new Date().toLocaleDateString('hi-IN', options);
-    return date;
+    const locale = language === 'hi' ? 'hi-IN' : 'en-US';
+    return new Date().toLocaleDateString(locale, options);
   };
 
-  const quickChatQuestions = [
+  const quickChatQuestions = language === 'hi' ? [
     "PM-KISAN पैसा कब आएगा?",
     "आयुष्मान card कैसे बनेगा?",
     "मेरे लिए कौन सी योजनाएं हैं?",
+  ] : [
+    "When will PM-KISAN money come?",
+    "How to make Ayushman card?",
+    "What schemes are available for me?",
   ];
 
   if (loading) {
@@ -127,9 +133,9 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold mb-2">
-              नमस्ते, रमेश कुमार जी! 🙏
+              {language === 'hi' ? 'नमस्ते, रमेश कुमार जी! 🙏' : 'Hello, Ramesh Kumar! 🙏'}
             </h2>
-            <p className="text-white/80">{formatDateInHindi()}</p>
+            <p className="text-white/80">{formatDate()}</p>
           </div>
           <div className="text-center">
             <div className="relative w-20 h-20">
@@ -159,7 +165,7 @@ export default function DashboardPage() {
                 <span className="text-white font-bold text-lg">80%</span>
               </div>
             </div>
-            <p className="text-sm text-white/80 mt-2">प्रोफाइल पूरा करें</p>
+            <p className="text-sm text-white/80 mt-2">{t('profile')}</p>
           </div>
         </div>
       </Card>
@@ -168,7 +174,7 @@ export default function DashboardPage() {
       <Card className="p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold text-[#1a3a6b]">
-            🎉 आपके लिए {matchedSchemes.length} योजनाएं मिली हैं!
+            🎉 {language === 'hi' ? `आपके लिए ${matchedSchemes.length} योजनाएं मिली हैं!` : `Found ${matchedSchemes.length} schemes for you!`}
           </h3>
         </div>
 
@@ -196,11 +202,11 @@ export default function DashboardPage() {
             </div>
             <div className="flex gap-3">
               <Link href="/dashboard/my-schemes">
-                <Button variant="outline">सभी देखें →</Button>
+                <Button variant="outline">{t('viewAllSchemes')} →</Button>
               </Link>
               <Link href="/dashboard/finder">
                 <Button className="bg-[#FF6B00] hover:bg-[#FF6B00]/90">
-                  🤖 नई खोज करें
+                  🤖 {language === 'hi' ? 'नई खोज करें' : 'New Search'}
                 </Button>
               </Link>
             </div>
@@ -209,13 +215,13 @@ export default function DashboardPage() {
           <div className="text-center py-8">
             <div className="text-6xl mb-4">🔍</div>
             <h4 className="text-lg font-medium text-gray-600 mb-2">
-              अभी AI से अपनी योजनाएं खोजें
+              {language === 'hi' ? 'अभी AI से अपनी योजनाएं खोजें' : 'Find your schemes with AI now'}
             </h4>
-            <Link href="/dashboard/finder">
-              <Button className="bg-[#FF6B00] hover:bg-[#FF6B00]/90">
-                योजनाएं खोजें →
-              </Button>
-            </Link>
+              <Link href="/dashboard/finder">
+                <Button className="bg-[#FF6B00] hover:bg-[#FF6B00]/90">
+                  {language === 'hi' ? 'योजनाएं खोजें' : 'Find Schemes'} →
+                </Button>
+              </Link>
           </div>
         )}
       </Card>
@@ -225,26 +231,22 @@ export default function DashboardPage() {
         <StatsCard
           icon="📊"
           value={stats.total}
-          label="Total Applications"
-          labelHindi="कुल आवेदन"
+          label={language === 'hi' ? 'कुल आवेदन' : 'Total Applications'}
         />
         <StatsCard
           icon="✅"
           value={stats.approved}
-          label="Approved"
-          labelHindi="स्वीकृत"
+          label={language === 'hi' ? 'स्वीकृत' : 'Approved'}
         />
         <StatsCard
           icon="⏳"
           value={stats.pending}
-          label="Pending"
-          labelHindi="विचाराधीन"
+          label={language === 'hi' ? 'विचाराधीन' : 'Pending'}
         />
         <StatsCard
           icon="💾"
           value={stats.saved}
-          label="Saved"
-          labelHindi="सहेजा गया"
+          label={language === 'hi' ? 'सहेजा गया' : 'Saved'}
         />
       </div>
 
@@ -252,7 +254,7 @@ export default function DashboardPage() {
         {/* 4. UPCOMING REMINDERS */}
         <Card className="p-6">
           <h3 className="text-xl font-bold text-[#1a3a6b] mb-4">
-            ⏰ आने वाली deadlines
+            ⏰ {t('upcomingDeadlines')}
           </h3>
           <div className="space-y-3">
             {reminders.map((reminder: any) => {
@@ -275,12 +277,12 @@ export default function DashboardPage() {
                       <div>
                         <p className="font-medium text-gray-800">{reminder.title}</p>
                         <p className="text-sm text-gray-600">
-                          {new Date(reminder.dueDate).toLocaleDateString("hi-IN")}
+                          {new Date(reminder.dueDate).toLocaleDateString(language === 'hi' ? "hi-IN" : "en-US")}
                         </p>
                       </div>
                     </div>
                     <Badge variant={daysUntilDue < 7 ? "destructive" : "secondary"}>
-                      {daysUntilDue} दिन
+                      {daysUntilDue} {language === 'hi' ? 'दिन' : 'days'}
                     </Badge>
                   </div>
                 </div>
@@ -289,7 +291,7 @@ export default function DashboardPage() {
           </div>
           <Link href="/dashboard/reminders">
             <Button variant="outline" className="w-full mt-4">
-              सभी देखें →
+              {t('viewAllReminders')} →
             </Button>
           </Link>
         </Card>
@@ -297,10 +299,10 @@ export default function DashboardPage() {
         {/* 5. AI QUICK ACCESS */}
         <Card className="p-6 border-l-4 border-l-[#1a3a6b]">
           <h3 className="text-xl font-bold text-[#1a3a6b] mb-2">
-            💬 AI साथी से पूछें
+            💬 {t('aiQuickHelp')}
           </h3>
           <p className="text-gray-600 mb-4">
-            कोई भी सरकारी योजना का सवाल हिंदी में पूछें
+            {language === 'hi' ? 'कोई भी सरकारी योजना का सवाल हिंदी में पूछें' : 'Ask any government scheme question in Hindi'}
           </p>
           
           <div className="space-y-2 mb-4">
@@ -318,7 +320,7 @@ export default function DashboardPage() {
 
           <Link href="/dashboard/chat">
             <Button className="w-full bg-[#FF6B00] hover:bg-[#FF6B00]/90">
-              AI साथी खोलें →
+              {language === 'hi' ? 'AI साथी खोलें' : 'Open AI Assistant'} →
             </Button>
           </Link>
         </Card>
@@ -327,7 +329,7 @@ export default function DashboardPage() {
       {/* 6. RECENT ACTIVITY */}
       <Card className="p-6">
         <h3 className="text-xl font-bold text-[#1a3a6b] mb-4">
-          हाल की गतिविधि
+          {t('recentActivity')}
         </h3>
         <div className="space-y-3">
           {recentActivity.map((activity: any) => (

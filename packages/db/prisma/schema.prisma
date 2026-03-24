@@ -1,3 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── AUTH MODELS ─────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  phone         String?   @unique
+  image         String?
+  password      String?
+  role          String    @default("user")
+  language      String    @default("hi")
+  isPremium     Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  profile       UserProfile?
+  familyMembers FamilyMember[]
+  applications  Application[]
+  reminders     Reminder[]
+  savedSchemes  SavedScheme[]
+  chatSessions  ChatSession[]
+  documents     UserDocument[]
+  accounts      Account[]
+  sessions      Session[]
+  operator      CscOperator?
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── USER PROFILE ────────────────────────────────────
+
 model UserProfile {
   id                String   @id @default(cuid())
   userId            String   @unique
@@ -26,6 +99,8 @@ model UserProfile {
   updatedAt         DateTime @updatedAt
 }
 
+// ─── FAMILY ──────────────────────────────────────────
+
 model FamilyMember {
   id         String   @id @default(cuid())
   userId     String
@@ -38,6 +113,8 @@ model FamilyMember {
   isStudent  Boolean  @default(false)
   createdAt  DateTime @default(now())
 }
+
+// ─── SCHEME ──────────────────────────────────────────
 
 model Scheme {
   id                  String    @id @default(cuid())
@@ -78,6 +155,8 @@ model Scheme {
   savedBy      SavedScheme[]
 }
 
+// ─── APPLICATION ─────────────────────────────────────
+
 model Application {
   id              String   @id @default(cuid())
   userId          String
@@ -93,6 +172,8 @@ model Application {
   updatedAt       DateTime @updatedAt
 }
 
+// ─── SAVED SCHEME ────────────────────────────────────
+
 model SavedScheme {
   id       String   @id @default(cuid())
   userId   String
@@ -100,8 +181,11 @@ model SavedScheme {
   schemeId String
   scheme   Scheme   @relation(fields: [schemeId], references: [id])
   savedAt  DateTime @default(now())
+
   @@unique([userId, schemeId])
 }
+
+// ─── USER DOCUMENT ───────────────────────────────────
 
 model UserDocument {
   id         String   @id @default(cuid())
@@ -114,21 +198,25 @@ model UserDocument {
   uploadedAt DateTime @default(now())
 }
 
+// ─── REMINDER ────────────────────────────────────────
+
 model Reminder {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type      String
-  title     String
-  titleHindi String
-  message   String   @db.Text
-  messageHindi String @db.Text
-  dueDate   DateTime
-  isRead    Boolean  @default(false)
-  isSent    Boolean  @default(false)
-  schemeId  String?
-  createdAt DateTime @default(now())
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type         String
+  title        String
+  titleHindi   String
+  message      String   @db.Text
+  messageHindi String   @db.Text
+  dueDate      DateTime
+  isRead       Boolean  @default(false)
+  isSent       Boolean  @default(false)
+  schemeId     String?
+  createdAt    DateTime @default(now())
 }
+
+// ─── AI CHAT ─────────────────────────────────────────
 
 model ChatSession {
   id        String        @id @default(cuid())
@@ -149,6 +237,8 @@ model ChatMessage {
   content   String      @db.Text
   createdAt DateTime    @default(now())
 }
+
+// ─── CSC OPERATOR ────────────────────────────────────
 
 model CscOperator {
   id            String   @id @default(cuid())
