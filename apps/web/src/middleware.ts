@@ -1,4 +1,6 @@
-import { auth } from '../auth'
+import NextAuth from 'next-auth'
+import { authConfig } from './auth.config'
+const { auth } = NextAuth(authConfig)
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
@@ -24,8 +26,15 @@ export default auth((req) => {
   // Allow public routes
   const isPublic = PUBLIC_ROUTES.includes(pathname) || 
     PUBLIC_PREFIXES.some(p => pathname.startsWith(p))
-  
-  if (isPublic) return NextResponse.next()
+
+  if (isPublic) {
+    if (isLoggedIn && pathname === '/') {
+      if (userRole === 'admin') return NextResponse.redirect(new URL('/admin', req.url))
+      if (userRole === 'operator') return NextResponse.redirect(new URL('/operator', req.url))
+      return NextResponse.redirect(new URL('/dashboard', req.url))
+    }
+    return NextResponse.next()
+  }
 
   // Not logged in → login
   if (!isLoggedIn) {

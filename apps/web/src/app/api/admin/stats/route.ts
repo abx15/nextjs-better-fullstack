@@ -1,31 +1,38 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "../../../../../auth";
+import { auth } from "@/auth";
 import prisma from "@full-stack-nextjs/db";
 
-export async function GET(req: NextRequest) {
-  try {
-    const session = await auth();
-    if (!session?.user?.id || session.user.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+export async function GET() {
+  const session = await auth();
+  if (session?.user?.role !== "admin") return Response.json({ error: "Unauthorized" }, { status: 401 });
+
+  const [
+    totalUsers,
+    totalSchemes,
+    totalApplications,
+    activeSchemes,
+    newUsersToday,
+    pendingApplications
+  ] = await Promise.all([
+    prisma.user.count(),
+    prisma.scheme.count(),
+    prisma.application.count(),
+    prisma.scheme.count({ where: { isActive: true } }),
+    prisma.user.count({ 
+      where: { 
+        createdAt: { gte: new Date(new Date().setHours(0, 0, 0, 0)) } 
+      } 
+    }),
+    prisma.application.count({ where: { status: "pending" } })
+  ]);
+
+  return Response.json({
+    stats: {
+      totalUsers,
+      totalSchemes,
+      totalApplications,
+      activeSchemes,
+      newUsersToday,
+      pendingApplications
     }
-
-    // Mock stats - replace with actual database queries
-    const stats = {
-      totalUsers: 50234,
-      activeSchemes: 1043,
-      applicationsToday: 234,
-      premiumUsers: 1200,
-      userGrowth: 12,
-      applicationGrowth: 5,
-      premiumGrowth: 8,
-    };
-
-    return NextResponse.json({ stats });
-  } catch (error) {
-    console.error("Error fetching admin stats:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
-  }
+  });
 }
