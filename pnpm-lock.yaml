@@ -7,7 +7,7 @@ settings:
 catalogs:
   default:
     '@prisma/client':
-      specifier: ^7.5.0
+      specifier: 7.5.0
       version: 7.5.0
     '@trpc/client':
       specifier: ^11.13.4
@@ -12605,7 +12605,7 @@ snapshots:
       std-env: 3.10.0
       test-exclude: 7.0.2
       tinyrainbow: 2.0.0
-      vitest: 3.2.4(@types/debug@4.1.13)(@types/node@20.19.37)(@vitest/ui@3.2.4)(happy-dom@20.8.4)(jiti@2.6.1)(jsdom@26.1.0)(lightningcss@1.32.0)(msw@2.12.14(@types/node@20.19.37)(typescript@5.9.3))(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.3)
+      vitest: 3.2.4(@types/debug@4.1.13)(@types/node@22.19.15)(@vitest/ui@3.2.4)(happy-dom@20.8.4)(jiti@2.6.1)(jsdom@26.1.0)(lightningcss@1.32.0)(msw@2.12.14(@types/node@22.19.15)(typescript@5.9.3))(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.3)
     transitivePeerDependencies:
       - supports-color
 
@@ -12664,7 +12664,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 2.0.0
-      vitest: 3.2.4(@types/debug@4.1.13)(@types/node@20.19.37)(@vitest/ui@3.2.4)(happy-dom@20.8.4)(jiti@2.6.1)(jsdom@26.1.0)(lightningcss@1.32.0)(msw@2.12.14(@types/node@20.19.37)(typescript@5.9.3))(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.3)
+      vitest: 3.2.4(@types/debug@4.1.13)(@types/node@22.19.15)(@vitest/ui@3.2.4)(happy-dom@20.8.4)(jiti@2.6.1)(jsdom@26.1.0)(lightningcss@1.32.0)(msw@2.12.14(@types/node@22.19.15)(typescript@5.9.3))(sass@1.77.4)(tsx@4.21.0)(yaml@2.8.3)
 
   '@vitest/utils@3.2.4':
     dependencies:

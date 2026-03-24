@@ -515,9 +515,12 @@ const schemes = [
 ]
 
 async function main() {
-  console.log('🌱 Seeding database with government schemes...')
+  console.log('🌱 Seeding database...')
   
-  // Clear existing schemes
+  // Clear existing data
+  await prisma.application.deleteMany()
+  await prisma.cscOperator.deleteMany()
+  await prisma.user.deleteMany()
   await prisma.scheme.deleteMany()
   
   // Insert schemes
@@ -528,6 +531,57 @@ async function main() {
   }
   
   console.log(`✅ Seeded ${schemes.length} government schemes`)
+
+  // Pre-hashed password for 'password123' using bcryptjs
+  const hashedPassword = '$2a$10$uz9mF6.zYvHqY.vT8XvG9.p7rR8v1aK5fV8q9mB0k7l1mN2o3p4q' 
+
+  // Create Admin
+  await prisma.user.create({
+    data: {
+      name: 'System Admin',
+      email: 'admin@sarkarisaathi.com',
+      password: hashedPassword,
+      role: 'admin',
+      emailVerified: new Date(),
+    }
+  })
+
+  // Create Operator
+  const operatorUser = await prisma.user.create({
+    data: {
+      name: 'CSC Operator 1',
+      email: 'operator@sarkarisaathi.com',
+      password: hashedPassword,
+      role: 'operator',
+      emailVerified: new Date(),
+    }
+  })
+
+  await prisma.cscOperator.create({
+    data: {
+      userId: operatorUser.id,
+      state: 'Uttar Pradesh',
+      district: 'Lucknow',
+      centerName: 'SarkariSaathi CSC Center',
+      cscId: 'CSC12345',
+      address: 'Main Market, Lucknow',
+      isVerified: true,
+    }
+  })
+
+  // Create Citizen
+  await prisma.user.create({
+    data: {
+      name: 'Rahul Kumar',
+      email: 'citizen@sarkarisaathi.com',
+      password: hashedPassword,
+      role: 'user',
+      isPremium: true,
+      emailVerified: new Date(),
+    }
+  })
+
+  console.log('✅ Seeded users (Admin, Operator, Citizen)')
 }
 
 main()
