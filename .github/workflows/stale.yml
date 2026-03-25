@@ -1,0 +1,228 @@
+name: Issue and PR Management
+
+on:
+  schedule:
+    # Run every weekday at 9 AM UTC
+    - cron: '0 9 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  stale-issues:
+    name: Mark Stale Issues
+    runs-on: ubuntu-latest
+    
+    permissions:
+      issues: write
+      pull-requests: write
+      
+    steps:
+    - name: Mark stale issues and pull requests
+      uses: actions/stale@v9
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        stale-issue-message: |
+          🚨 This issue has been marked as stale due to inactivity.
+          
+          If this issue is still relevant, please:
+          - Add a comment explaining why it's still needed
+          - Provide additional information if requested
+          - Link to related issues or pull requests
+          
+          If no activity occurs within 7 days, this issue will be automatically closed.
+          
+          Thank you for your understanding! 🙏
+          
+          ---
+          
+          **हिंदी में**: यह issue निष्क्रियता के कारण stale के रूप में चिह्नित किया गया है।
+          
+          यदि यह issue अभी भी प्रासंगिक है, तो कृपया:
+          - एक टिप्पणी जोड़ें और बताएं कि यह अभी भी आवश्यक क्यों है
+          - यदि अनुरोध किया गया हो तो अतिरिक्त जानकारी प्रदान करें
+          - संबंधित issues या pull requests से लिंक करें
+          
+          यदि 7 दिनों के भीतर कोई गतिविधि नहीं होती है, तो यह issue स्वचालित रूप से बंद कर दिया जाएगा।
+          
+          आपके समझने के लिए धन्यवाद! 🙏
+        stale-pr-message: |
+          🚨 This pull request has been marked as stale due to inactivity.
+          
+          If this PR is still being worked on, please:
+          - Add a comment with your progress
+          - Address any review comments
+          - Update the PR if needed
+          
+          If no activity occurs within 7 days, this PR will be automatically closed.
+          
+          Thank you for your contribution! 🙏
+          
+          ---
+          
+          **हिंदी में**: यह pull request निष्क्रियता के कारण stale के रूप में चिह्नित किया गया है।
+          
+          यदि यह PR अभी भी काम में है, तो कृपया:
+          - अपनी प्रगति के साथ एक टिप्पणी जोड़ें
+          - किसी भी समीक्षा टिप्पणियों का समाधान करें
+          - यदि आवश्यक हो तो PR को अपडेट करें
+          
+          यदि 7 दिनों के भीतर कोई गतिविधि नहीं होती है, तो यह PR स्वचालित रूप से बंद कर दिया जाएगा।
+          
+          आपके योगदान के लिए धन्यवाद! 🙏
+        days-before-issue-stale: 30
+        days-before-pr-stale: 21
+        days-before-issue-close: 7
+        days-before-pr-close: 7
+        stale-issue-label: 'stale'
+        close-issue-label: 'inactive'
+        stale-pr-label: 'stale'
+        close-pr-label: 'inactive'
+        exempt-issue-labels: 'pinned,security,help wanted,good first issue,enhancement'
+        exempt-pr-labels: 'pinned,security,work-in-progress'
+        only-labels: ''
+
+  label-issues:
+    name: Auto-label Issues
+    runs-on: ubuntu-latest
+    
+    permissions:
+      issues: write
+      
+    steps:
+    - name: Auto-label new issues
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const issue = context.payload.issue;
+          const title = issue.title.toLowerCase();
+          const body = issue.body ? issue.body.toLowerCase() : '';
+          const labels = [];
+          
+          // Bug detection
+          if (title.includes('bug') || title.includes('error') || title.includes('fix') ||
+              body.includes('bug') || body.includes('error') || body.includes('broken') ||
+              body.includes('not working') || body.includes('issue')) {
+            labels.push('bug');
+          }
+          
+          // Feature request detection
+          if (title.includes('feature') || title.includes('enhancement') || title.includes('add') ||
+              body.includes('feature') || body.includes('enhancement') || body.includes('suggestion') ||
+              body.includes('would be nice') || body.includes('it would be great')) {
+            labels.push('enhancement');
+          }
+          
+          // Documentation detection
+          if (title.includes('docs') || title.includes('documentation') || title.includes('readme') ||
+              body.includes('documentation') || body.includes('docs') || body.includes('readme')) {
+            labels.push('documentation');
+          }
+          
+          // Help wanted detection
+          if (title.includes('help') || title.includes('question') || title.includes('how to') ||
+              body.includes('help') || body.includes('question') || body.includes('how to') ||
+              body.includes('stuck') || body.includes('confused')) {
+            labels.push('question');
+          }
+          
+          // Security detection
+          if (title.includes('security') || title.includes('vulnerability') || title.includes('exploit') ||
+              body.includes('security') || body.includes('vulnerability') || body.includes('exploit') ||
+              body.includes('hack') || body.includes('breach')) {
+            labels.push('security');
+          }
+          
+          // Language-specific detection
+          if (title.includes('hindi') || title.includes('translation') || title.includes('language') ||
+              body.includes('hindi') || body.includes('translation') || body.includes('language') ||
+              body.includes('हिंदी') || body.includes('अनुवाद')) {
+            labels.push('localization');
+          }
+          
+          // Apply labels
+          if (labels.length > 0) {
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              labels: labels
+            });
+          }
+
+  welcome-new-users:
+    name: Welcome New Contributors
+    runs-on: ubuntu-latest
+    
+    permissions:
+      issues: write
+      pull-requests: write
+      
+    steps:
+    - name: Welcome new contributors
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const issueOrPr = context.payload.issue || context.payload.pull_request;
+          const author = issueOrPr.user;
+          const isPr = !!context.payload.pull_request;
+          
+          // Check if this is the user's first contribution
+          const { data: issues } = await github.rest.issues.listForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            creator: author.login,
+            state: 'all'
+          });
+          
+          if (issues.length === 1) {
+            const welcomeMessage = `
+            🎉 Welcome to SarkariSaathi, @${author.login}!
+            
+            Thank you for your ${isPr ? 'pull request' : 'issue'}! We're excited to have you contributing to our mission of making government schemes accessible to every Indian.
+            
+            ### 🚀 Next Steps:
+            ${isPr ? `
+            - Our team will review your PR shortly
+            - Please address any review comments
+            - Feel free to ask questions if you need help
+            ` : `
+            - We'll look into your issue as soon as possible
+            - Please provide any additional information if requested
+            - Consider joining our discussions for general questions
+            `}
+            
+            ### 🌟 How to Get Started:
+            - 📖 Read our [Contributing Guide](https://github.com/abx15/nextjs-better-fullstack/blob/main/CONTRIBUTING.md)
+            - 🎯 Check out [good first issues](https://github.com/abx15/nextjs-better-fullstack/labels/good%20first%20issue)
+            - 💬 Join our [Discord community](https://discord.gg/sarkari-saathi)
+            - 📱 Follow us on [Twitter](https://twitter.com/SarkariSaathi)
+            
+            ### 🏛️ Our Mission:
+            *"हर भारतीय को सरकारी योजनाओं का लाभ दिलाना"*  
+            *"Helping every Indian access government schemes"*
+            
+            Your contribution helps us serve millions of Indians better. Together, we can make a real difference! 🇮🇳
+            
+            ---
+            
+            **हिंदी में स्वागत है!**
+            
+            🎉 SarkariSaathi में आपका स्वागत है, @${author.login}!
+            
+            आपके ${isPr ? 'pull request' : 'issue'} के लिए धन्यवाद! हम उत्साहित हैं कि आप हर भारतीय के लिए सरकारी योजनाओं को सुलभ बनाने के हमारे मिशन में योगदान कर रहे हैं।
+            
+            आपका योगदान हमें लाखों भारतीयों को बेहतर सेवा देने में मदद करता है। एक साथ, हम वास्तविक अंतर ला सकते हैं! 🇮🇳
+            
+            ---
+            
+            🙏 Thank you for being part of our community!
+            `;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueOrPr.number,
+              body: welcomeMessage
+            });
+          }

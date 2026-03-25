@@ -7,10 +7,18 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=for-the-badge&logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4+-38B2AC?style=for-the-badge&logo=tailwind-css)
 ![License](https://img.shields.io/badge/License-MIT-008000?style=for-the-badge)
+![GitHub Stars](https://img.shields.io/github/stars/abx15/nextjs-better-fullstack?style=for-the-badge&logo=github)
+![GitHub Forks](https://img.shields.io/github/forks/abx15/nextjs-better-fullstack?style=for-the-badge&logo=github)
+![GitHub Issues](https://img.shields.io/github/issues/abx15/nextjs-better-fullstack?style=for-the-badge&logo=github)
+![GitHub PRs](https://img.shields.io/github/issues-pr/abx15/nextjs-better-fullstack?style=for-the-badge&logo=github)
+![Build Status](https://img.shields.io/github/actions/workflow/status/abx15/nextjs-better-fullstack/ci.yml?style=for-the-badge&logo=github)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)
+![Contributors](https://img.shields.io/github/contributors/abx15/nextjs-better-fullstack?style=for-the-badge&logo=github)
+![Last Commit](https://img.shields.io/github/last-commit/abx15/nextjs-better-fullstack?style=for-the-badge&logo=github)
 
 **A comprehensive AI-powered government scheme discovery platform with complete Hindi/English bilingual support**
 
-[🚀 Live Demo](https://sarkari-saathi.vercel.app) • [📖 Documentation](#-documentation) • [🤝 Contributing](#-contributing) • [📞 Support](#-support)
+[🚀 Live Demo](https://sarkari-saathi.vercel.app) • [📖 Documentation](#-documentation) • [🤝 Contributing](CONTRIBUTING.md) • [🔒 Security Policy](SECURITY.md) • [📜 Code of Conduct](CODE_OF_CONDUCT.md) • [📞 Support](#-support)
 
 </div>
 
@@ -551,6 +559,8 @@ SARVAM_API_KEY="your-production-sarvam-key"
 
 ## 🤝 Contributing
 
+We welcome contributions from the community! Whether you're a developer, designer, translator, or just passionate about public service, there are many ways to contribute to SarkariSaathi.
+
 ### 🎯 How to Contribute
 
 #### 1. Fork the Repository
@@ -587,13 +597,23 @@ git push origin feature/amazing-feature
 # Create Pull Request on GitHub
 ```
 
-### 📝 Development Guidelines
+### 📝 Contribution Types
+
+- **💻 Code** - Bug fixes, new features, improvements
+- **📖 Documentation** - Improving docs, tutorials, guides
+- **🎨 Design** - UI/UX improvements, graphics
+- **🐛 Bug Reports** - Finding and reporting issues
+- **💡 Ideas** - Feature suggestions, improvements
+- **🌍 Translation** - Helping with Hindi/English translations
+- **📢 Promotion** - Spreading the word about SarkariSaathi
+
+### 📋 Development Guidelines
 
 #### Code Style
 - **TypeScript** - Use strict TypeScript
-- **ESLint** - Follow linting rules
-- **Prettier** - Use consistent formatting
+- **Biome** - Follow linting and formatting rules
 - **Components** - Keep components small and focused
+- **Tests** - Write comprehensive tests
 
 #### Language Support
 - **Hindi First** - Prioritize Hindi translations
@@ -607,6 +627,18 @@ git push origin feature/amazing-feature
 - **E2E Tests** - Test user workflows
 - **Language Tests** - Verify both languages work
 
+### 🏆 Recognition
+
+All contributors are recognized in:
+- **README.md** - Contributors list
+- **Release Notes** - Acknowledgments
+- **Annual Awards** - Top contributors
+- **Special Features** - Contributor-exclusive features
+
+---
+
+**📖 Detailed contributing guide available in [CONTRIBUTING.md](CONTRIBUTING.md)**
+
 ---
 
 ## 📄 License
@@ -618,8 +650,76 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 - ✅ **Modification** - Modify the code
 - ✅ **Distribution** - Distribute your modifications
 - ✅ **Private Use** - Use privately
+- ✅ **Sublicensing** - Use in other licensed projects
 - ❌ **Liability** - No warranty provided
 - ❌ **Trademark** - Cannot use trademark
+
+---
+
+## 🔒 Security
+
+We take security seriously at SarkariSaathi. If you discover a security vulnerability, please report it responsibly.
+
+### 🚨 Reporting Security Issues
+
+- **Email**: security@sarkarisaathi.in
+- **GitHub Security**: [Report a vulnerability](https://github.com/abx15/nextjs-better-fullstack/security/advisories)
+- **Response Time**: Within 24 hours
+
+### 🛡️ Security Features
+
+- **End-to-end Encryption** - All data encrypted in transit and at rest
+- **Secure Authentication** - OAuth 2.0 and secure session management
+- **Input Validation** - Comprehensive input sanitization
+- **Regular Security Audits** - Continuous security monitoring
+- **GDPR Compliant** - Data protection and privacy compliance
+
+---
+
+**📖 Detailed security policy available in [SECURITY.md](SECURITY.md)**
+
+---
+
+## 🤝 Contributors
+
+Thanks to all these amazing contributors who made this project possible!
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+### 🏆 Top Contributors
+
+- **[Your Name Here]** - Lead Developer
+- **[Your Name Here]** - UI/UX Designer
+- **[Your Name Here]** - Documentation
+- **[Your Name Here]** - Community Manager
+
+---
+
+## 🏆 Sponsors
+
+Special thanks to our amazing sponsors who support this project!
+
+### 💎 Gold Sponsors
+
+<!-- Add gold sponsors here -->
+
+### 🥈 Silver Sponsors
+
+<!-- Add silver sponsors here -->
+
+### 🥉 Bronze Sponsors
+
+<!-- Add bronze sponsors here -->
+
+### 🌟 Individual Sponsors
+
+<!-- Add individual sponsors here -->
+
+---
+
+**Want to become a sponsor?** [Contact us](mailto:sponsor@sarkarisaathi.in) or visit our [GitHub Sponsors](https://github.com/sponsors/abx15) page.
 
 ---
 
@@ -717,7 +817,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 **🏛️ SarkariSaathi - Empowering Every Indian with Government Schemes**
 
-[⭐ Star This Repo](https://github.com/abx15/nextjs-better-fullstack) • [🍴 Fork This Repo](https://github.com/abx15/nextjs-better-fullstack/fork) • [🐛 Report Issues](https://github.com/abx15/nextjs-better-fullstack/issues)
+[⭐ Star This Repo](https://github.com/abx15/nextjs-better-fullstack) • [🍴 Fork This Repo](https://github.com/abx15/nextjs-better-fullstack/fork) • [🐛 Report Issues](https://github.com/abx15/nextjs-better-fullstack/issues) • [🤝 Contribute](CONTRIBUTING.md) • [🏆 Sponsor Us](https://github.com/sponsors/abx15)
 
 ---
 
