@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import LanguageToggle from "@/components/sarkari/language-toggle";
 import ReminderBell from "@/components/sarkari/reminder-bell";
 import { useLanguage } from "@/contexts/language-context";
+import { logout } from "@/actions/auth";
 
 const sidebarItems = [
   { href: "/dashboard", icon: "🏠", labelKey: "dashboard" },
@@ -36,8 +37,24 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const { t } = useLanguage();
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -112,9 +129,13 @@ export default function DashboardLayout({
             </a>
 
             {/* Logout */}
-            <button className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors w-full">
-              <span className="mr-3 text-lg">🚪</span>
-              Logout
+            <button 
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors w-full disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="mr-3 text-lg">{isLoggingOut ? "⏳" : "🚪"}</span>
+              {isLoggingOut ? "Logging out..." : "Logout"}
             </button>
           </div>
         </div>
@@ -200,9 +221,16 @@ export default function DashboardLayout({
               Premium लें
             </a>
 
-            <button className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors w-full">
-              <span className="mr-3 text-lg">🚪</span>
-              Logout
+            <button 
+              onClick={() => {
+                setSidebarOpen(false);
+                handleLogout();
+              }}
+              disabled={isLoggingOut}
+              className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors w-full disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="mr-3 text-lg">{isLoggingOut ? "⏳" : "🚪"}</span>
+              {isLoggingOut ? "Logging out..." : "Logout"}
             </button>
           </div>
         </div>
@@ -263,8 +291,12 @@ export default function DashboardLayout({
                         {t("settings")}
                       </a>
                       <div className="border-t border-gray-200" />
-                      <button className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-                        {t("logout")}
+                      <button 
+                        onClick={handleLogout}
+                        disabled={isLoggingOut}
+                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isLoggingOut ? "Logging out..." : t("logout")}
                       </button>
                     </div>
                   )}
