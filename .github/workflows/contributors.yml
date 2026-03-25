@@ -1,0 +1,142 @@
+name: Contributors Management
+
+on:
+  schedule:
+    # Run every day at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/contributors.yml'
+      - 'README.md'
+
+jobs:
+  update-contributors:
+    name: Update Contributors List
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      pull-requests: write
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Generate contributors list
+      uses: contributor-contributor/contributors@v2.1.0
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit_message: "docs: update contributors list"
+        files: README.md
+        template: |
+          ## 🤝 Contributors
+          
+          Thanks to all these amazing contributors who made this project possible!
+          
+          <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+          <!-- prettier-ignore -->
+          <!-- ALL-CONTRIBUTORS-LIST:END -->
+          
+          ### How to Become a Contributor
+          
+          1. Fork this repository
+          2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+          3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+          4. Push to the branch (`git push origin feature/amazing-feature`)
+          5. Open a Pull Request
+          
+          ### Contribution Types
+          
+          - 💻 **Code** - Bug fixes, new features, improvements
+          - 📖 **Documentation** - Improving docs, tutorials, guides
+          - 🎨 **Design** - UI/UX improvements, graphics
+          - 🐛 **Bug Reports** - Finding and reporting issues
+          - 💡 **Ideas** - Feature suggestions, improvements
+          - 🌍 **Translation** - Helping with translations
+          - 📢 **Promotion** - Spreading the word
+          
+          <div align="center">
+            
+          **Made with ❤️ by our amazing contributors**
+          
+          </div>
+
+  add-all-contributors:
+    name: Add All Contributors
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      pull-requests: write
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Add all contributors
+      uses: all-contributors/all-contributors@v6.43.2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        command: generate
+        files: README.md
+
+  recognize-sponsors:
+    name: Recognize Sponsors
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Update sponsors section
+      run: |
+        # Create sponsors section in README if not exists
+        if ! grep -q "## 🏆 Sponsors" README.md; then
+          echo "
+          ## 🏆 Sponsors
+          
+          Special thanks to our amazing sponsors who support this project!
+          
+          ### 💎 Gold Sponsors
+          
+          <!-- Add gold sponsors here -->
+          
+          ### 🥈 Silver Sponsors
+          
+          <!-- Add silver sponsors here -->
+          
+          ### 🥉 Bronze Sponsors
+          
+          <!-- Add bronze sponsors here -->
+          
+          ### 🌟 Individual Sponsors
+          
+          <!-- Add individual sponsors here -->
+          
+          ---
+          
+          **Want to become a sponsor?** [Contact us](mailto:sponsor@sarkarisaathi.in) or visit our [GitHub Sponsors](https://github.com/sponsors/abx15) page.
+          
+          " >> README.md
+        fi
+        
+    - name: Commit sponsors update
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add README.md
+        git diff --staged --quiet || git commit -m "docs: update sponsors section"
+        git push
