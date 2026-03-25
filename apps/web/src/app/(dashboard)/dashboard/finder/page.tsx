@@ -10,6 +10,7 @@ import AITypingIndicator from "@/components/sarkari/ai-typing";
 import EmptyState from "@/components/sarkari/empty-state";
 
 export default function SchemeFinderPage() {
+  // All useState hooks must be called first
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedState, setSelectedState] = useState("all");
@@ -19,52 +20,10 @@ export default function SchemeFinderPage() {
   const [schemes, setSchemes] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [aiMatching, setAiMatching] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  const categories = [
-    { id: "kisan", label: "किसान", icon: "🌾" },
-    { id: "shiksha", label: "शिक्षा", icon: "🎓" },
-    { id: "swasthya", label: "स्वास्थ्य", icon: "🏥" },
-    { id: "awas", label: "आवास", icon: "🏠" },
-    { id: "rojgar", label: "रोजगार", icon: "💼" },
-    { id: "mahila", label: "महिला", icon: "👩" },
-    { id: "vridh", label: "वृद्ध", icon: "👴" },
-    { id: "divyang", label: "दिव्यांग", icon: "♿" },
-  ];
-
-  const states = [
-    "उत्तर प्रदेश",
-    "बिहार",
-    "मध्य प्रदेश",
-    "राजस्थान",
-    "दिल्ली",
-    "महाराष्ट्र",
-    "पंजाब",
-    "गुजरात",
-  ];
-
-  const difficulties = [
-    { id: "easy", label: "आसान" },
-    { id: "medium", label: "मध्यम" },
-    { id: "hard", label: "कठिन" },
-  ];
-
-  const benefitTypes = [
-    { id: "cash", label: "नकद" },
-    { id: "subsidy", label: "सब्सिडी" },
-    { id: "loan", label: "लोन" },
-    { id: "insurance", label: "बीमा" },
-  ];
-
-  const levels = [
-    { id: "central", label: "केंद्रीय" },
-    { id: "state", label: "राज्य" },
-  ];
-
-  useEffect(() => {
-    fetchSchemes();
-  }, [selectedCategory, selectedState, selectedDifficulty, selectedBenefitType, selectedLevel]);
-
-  const fetchSchemes = async () => {
+  // All functions must be defined before useEffect
+  const loadSchemes = async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -147,6 +106,61 @@ export default function SchemeFinderPage() {
       setter([...filterArray, value]);
     }
   };
+
+  // useEffect must be called after all useState hooks and functions
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Load schemes when dependencies change
+  useEffect(() => {
+    if (mounted) {
+      loadSchemes();
+    }
+  }, [mounted, selectedCategory, selectedState, selectedDifficulty, selectedBenefitType, selectedLevel, searchQuery]);
+
+  const categories = [
+    { id: "kisan", label: "किसान", icon: "🌾" },
+    { id: "shiksha", label: "शिक्षा", icon: "🎓" },
+    { id: "swasthya", label: "स्वास्थ्य", icon: "🏥" },
+    { id: "awas", label: "आवास", icon: "🏠" },
+    { id: "rojgar", label: "रोजगार", icon: "💼" },
+    { id: "mahila", label: "महिला", icon: "👩" },
+    { id: "vridh", label: "वृद्ध", icon: "👴" },
+    { id: "divyang", label: "दिव्यांग", icon: "♿" },
+  ];
+
+  const states = [
+    "उत्तर प्रदेश",
+    "बिहार",
+    "मध्य प्रदेश",
+    "राजस्थान",
+    "दिल्ली",
+    "महाराष्ट्र",
+    "पंजाब",
+    "गुजरात",
+  ];
+
+  const difficulties = [
+    { id: "easy", label: "आसान" },
+    { id: "medium", label: "मध्यम" },
+    { id: "hard", label: "कठिन" },
+  ];
+
+  const benefitTypes = [
+    { id: "cash", label: "नकद" },
+    { id: "subsidy", label: "सब्सिडी" },
+    { id: "loan", label: "लोन" },
+    { id: "insurance", label: "बीमा" },
+  ];
+
+  const levels = [
+    { id: "central", label: "केंद्रीय" },
+    { id: "state", label: "राज्य" },
+  ];
+
+  // Early return after all hooks are defined
+  if (!mounted) return null;
 
   return (
     <div className="flex gap-6">
