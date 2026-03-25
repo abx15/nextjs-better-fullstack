@@ -2,10 +2,10 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "full-stack-nextjs",
-    short_name: "full-stack-nextjs",
-    description: "my pwa app",
-    start_url: "/new",
+     name: "SarkariSaathi — सरकारी योजनाएं अब आसान",
+    short_name: "SarkariSaathi",
+    description: "AI-powered government schemes finder for Indian citizens.",
+    start_url: "/",
     display: "standalone",
     background_color: "#ffffff",
     theme_color: "#000000",

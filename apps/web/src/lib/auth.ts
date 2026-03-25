@@ -6,16 +6,30 @@ import Credentials from "next-auth/providers/credentials";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
+import { UserRole } from "./rbac";
 
 // Extend the built-in session type
 declare module "next-auth" {
   interface Session {
     user: {
       id: string;
-      role: string;
+      role: UserRole;
       isPremium: boolean;
       language: string;
+      isActive: boolean;
     } & DefaultSession["user"];
+  }
+
+  interface User {
+    role: UserRole;
+    isActive: boolean;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    role: UserRole;
+    isActive: boolean;
   }
 }
 
@@ -76,6 +90,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           name: user.name,
           phone: user.phone,
           image: user.image,
+          role: user.role,
+          isActive: (user as any).isActive ?? true,
         };
       },
     }),
@@ -87,12 +103,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, user }) {
       if (session.user && user) {
         session.user.id = user.id;
+        session.user.role = (user as any).role;
+        session.user.isActive = (user as any).isActive;
       }
       return session;
     },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.role = (user as any).role;
+        token.isActive = (user as any).isActive;
       }
       return token;
     },

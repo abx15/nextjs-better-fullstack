@@ -235,6 +235,24 @@ export default function ApplicationTrackerPage() {
     }
   };
 
+  const handleDeleteApplication = async (applicationId: string) => {
+    if (!confirm("क्या आप इस आवेदन को delete करना चाहते हैं?")) return;
+    
+    try {
+      const response = await fetch(`/api/applications/${applicationId}`, {
+        method: "DELETE",
+      });
+      
+      if (response.ok) {
+        fetchApplications();
+      } else {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Failed to delete application:", error);
+    }
+  };
+
   const openUpdateModal = (application: Application) => {
     setSelectedApplication(application);
     setUpdateForm({

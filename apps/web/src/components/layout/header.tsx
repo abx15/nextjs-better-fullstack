@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,16 +18,24 @@ import { LanguageToggle } from "@/components/ui/language-toggle";
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [mounted, setMounted] = useState(false);
   const { t } = useLanguage();
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const navigation = [
-    { name: t("navbar.home"), href: "/" },
-    { name: t("navbar.schemes"), href: "/schemes" },
-    { name: t("navbar.tracker"), href: "/tracker" },
-    { name: t("navbar.chat"), href: "/chat" },
-    { name: t("navbar.about"), href: "/about" },
-    { name: t("navbar.contact"), href: "/contact" },
+    { name: "होम", href: "/" },
+    { name: "योजनाएं", href: "/schemes" },
+    { name: "हमारे बारे में", href: "/about" },
+    { name: "संपर्क करें", href: "/contact" },
   ];
+
+  // Don't render until mounted to avoid hydration errors
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-50 border-b border-sarkari-navy-light/20" suppressHydrationWarning={true}>
@@ -65,7 +73,7 @@ export default function Header() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
                   type="text"
-                  placeholder={t("searchPlaceholder")}
+                  placeholder="योजना खोजें..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 pr-4 py-2 border border-sarkari-navy-light/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-sarkari-saffron focus:border-transparent bg-gray-50"
@@ -78,13 +86,13 @@ export default function Header() {
               <Link href="/login" className="flex items-center gap-2 cursor-pointer">
                 <Button variant="outline" size="sm" className="border-sarkari-navy-light/30 text-sarkari-navy hover:bg-sarkari-navy hover:text-white">
                   <LogIn className="w-4 h-4" />
-                  <span className="font-hindi">{t("login")}</span>
+                  <span className="font-hindi">लॉगिन</span>
                 </Button>
               </Link>
               <Link href="/register" className="flex items-center gap-2 cursor-pointer">
                 <Button size="sm" className="bg-sarkari-saffron hover:bg-sarkari-saffron-dark text-white shadow-md">
                   <User className="w-4 h-4" />
-                  <span className="font-hindi">{t("register")}</span>
+                  <span className="font-hindi">रजिस्टर</span>
                 </Button>
               </Link>
             </div>
@@ -116,7 +124,7 @@ export default function Header() {
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
                     type="text"
-                    placeholder={t("searchPlaceholder")}
+                    placeholder="योजना खोजें..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10 pr-4 py-3 border border-sarkari-navy-light/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-sarkari-saffron focus:border-transparent"
@@ -142,13 +150,13 @@ export default function Header() {
                   <Link href="/login" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2 cursor-pointer">
                     <Button variant="outline" size="sm" className="w-full border-sarkari-navy-light/30 text-sarkari-navy hover:bg-sarkari-navy hover:text-white">
                       <LogIn className="w-4 h-4" />
-                      <span className="font-hindi">{t("login")}</span>
+                      <span className="font-hindi">लॉगिन</span>
                     </Button>
                   </Link>
                   <Link href="/register" onClick={() => setIsMenuOpen(false)} className="cursor-pointer">
                     <Button size="sm" className="w-full bg-sarkari-saffron hover:bg-sarkari-saffron-dark text-white">
                       <User className="w-4 h-4" />
-                      <span className="font-hindi">{t("register")}</span>
+                      <span className="font-hindi">रजिस्टर</span>
                     </Button>
                   </Link>
                 </div>

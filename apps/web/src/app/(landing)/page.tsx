@@ -105,7 +105,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="overflow-x-hidden">
+    <div className="overflow-x-hidden" suppressHydrationWarning>
       {/* ─── HERO SECTION ─── */}
       <section
         ref={heroRef}

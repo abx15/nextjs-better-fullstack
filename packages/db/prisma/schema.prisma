@@ -17,9 +17,11 @@ model User {
   phone         String?   @unique
   image         String?
   password      String?
-  role          String    @default("user")
+  role          UserRole  @default(USER)
   language      String    @default("hi")
   isPremium     Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  lastLoginAt   DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -33,6 +35,14 @@ model User {
   accounts      Account[]
   sessions      Session[]
   operator      CscOperator?
+  adminProfile  AdminProfile?
+}
+
+enum UserRole {
+  USER
+  OPERATOR
+  ADMIN
+  SUPER_ADMIN
 }
 
 model Account {
@@ -236,6 +246,23 @@ model ChatMessage {
   role      String
   content   String      @db.Text
   createdAt DateTime    @default(now())
+}
+
+// ─── ADMIN PROFILE ────────────────────────────────────
+
+model AdminProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department      String?
+  jurisdiction    String?  // State/District level
+  permissions     Json     @default("{}")
+  canManageUsers  Boolean  @default(false)
+  canManageSchemes Boolean  @default(false)
+  canViewAnalytics Boolean @default(false)
+  lastActivity    DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 // ─── CSC OPERATOR ────────────────────────────────────

@@ -232,8 +232,9 @@ export default function SchemesPage() {
                     <Button 
                       size="sm" 
                       className="bg-sarkari-saffron hover:bg-sarkari-saffron-dark text-white"
+                      onClick={() => window.location.href = '/login'}
                     >
-                      आवेदन करें
+                      और जानें
                       <ArrowRight className="w-4 h-4 ml-1" />
                     </Button>
                   </div>
@@ -271,8 +272,9 @@ export default function SchemesPage() {
           <Button 
             size="lg" 
             className="bg-sarkari-saffron hover:bg-sarkari-saffron-dark text-white px-8"
+            onClick={() => window.location.href = '/login'}
           >
-            AI सहायता
+            🔐 लॉगिन करें AI Assistant के लिए
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>

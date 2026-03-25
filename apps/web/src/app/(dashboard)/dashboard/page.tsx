@@ -8,9 +8,11 @@ import SchemeCard from "@/components/sarkari/scheme-card";
 import StatsCard from "@/components/sarkari/stats-card";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/language-context";
+import { useSession } from "next-auth/react";
 
 export default function DashboardPage() {
   const { t, language } = useLanguage();
+  const { data: session } = useSession();
   const [matchedSchemes, setMatchedSchemes] = useState<any[]>([]);
   const [stats, setStats] = useState({
     total: 0,
@@ -128,12 +130,71 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* 1. WELCOME CARD */}
+      {/* Show services section if user is not logged in */}
+      {!session && (
+        <Card className="p-6 border-2 border-orange-200 bg-orange-50">
+          <div className="text-center">
+            <h3 className="text-xl font-bold text-orange-800 mb-4">
+              🏛️ SarkariSaathi Services
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Login or Register to access all government schemes and services
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="p-4 bg-white rounded-lg border">
+                <div className="text-4xl mb-2">🔍</div>
+                <h4 className="font-semibold text-gray-800">Scheme Search</h4>
+                <p className="text-sm text-gray-600">Find matching schemes</p>
+              </div>
+              <div className="p-4 bg-white rounded-lg border">
+                <div className="text-4xl mb-2">🤖</div>
+                <h4 className="font-semibold text-gray-800">AI Assistant</h4>
+                <p className="text-sm text-gray-600">Get help in Hindi</p>
+              </div>
+              <div className="p-4 bg-white rounded-lg border">
+                <div className="text-4xl mb-2">📄</div>
+                <h4 className="font-semibold text-gray-800">Document Upload</h4>
+                <p className="text-sm text-gray-600">Store documents safely</p>
+              </div>
+              <div className="p-4 bg-white rounded-lg border">
+                <div className="text-4xl mb-2">📊</div>
+                <h4 className="font-semibold text-gray-800">Application Tracking</h4>
+                <p className="text-sm text-gray-600">Track your applications</p>
+              </div>
+              <div className="p-4 bg-white rounded-lg border">
+                <div className="text-4xl mb-2">💬</div>
+                <h4 className="font-semibold text-gray-800">Chat Support</h4>
+                <p className="text-sm text-gray-600">Talk to experts</p>
+              </div>
+              <div className="p-4 bg-white rounded-lg border">
+                <div className="text-4xl mb-2">🏪</div>
+                <h4 className="font-semibold text-gray-800">CSC Centers</h4>
+                <p className="text-sm text-gray-600">Find nearby centers</p>
+              </div>
+            </div>
+            <div className="flex gap-4 justify-center mt-6">
+              <Link href="/login">
+                <Button className="bg-[#FF6B00] hover:bg-[#FF6B00]/90">
+                  🔐 Login
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button variant="outline">
+                  📝 Register
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {/* 1. WELCOME CARD - Only show if logged in */}
+      {session && (
       <Card className="p-6 bg-gradient-to-r from-[#1a3a6b] to-[#1a3a6b]/90 text-white">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold mb-2">
-              {t('dashboard.welcome', { name: 'रमेश कुमार' })}
+              {t('dashboard.welcome', { name: session.user?.name || 'रमेश कुमार' })}
             </h2>
             <p className="text-white/80">{formatDate()}</p>
           </div>
@@ -169,6 +230,7 @@ export default function DashboardPage() {
           </div>
         </div>
       </Card>
+      )}
 
       {/* 2. MATCHED SCHEMES HIGHLIGHT */}
       <Card className="p-6">

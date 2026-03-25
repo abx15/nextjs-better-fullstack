@@ -1,3 +1,4 @@
+import type { UserRole } from './lib/rbac'
 import NextAuth from 'next-auth'
 // import { PrismaAdapter } from '@auth/prisma-adapter'
 // import prisma from '@full-stack-nextjs/db'
@@ -31,7 +32,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           id: "1",
           name: "Demo User",
           email: parsed.data.email,
-          role: "user",
+          role: "USER" as UserRole,
+          isActive: true,
         }
       },
     }),
@@ -40,7 +42,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     ...authConfig.callbacks,
     async jwt({ token, user, trigger, session }) {
       if (user) {
-        token.role = (user as any).role
+        token.role = (user as any).role as UserRole
         token.id = user.id
       }
       return token
@@ -48,7 +50,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string
-        session.user.role = token.role as string
+        session.user.role = token.role as UserRole
       }
       return session
     },

@@ -46,7 +46,7 @@ export const useUserStore = create<UserState>()(
     }),
     { 
       name: 'sarkari-user-store',
-      skipHydration: true
+      skipHydration: true,
     }
   )
 )
