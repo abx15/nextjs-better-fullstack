@@ -1,15 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { prisma } from '@sarkari-saathi/db';
+import prisma from '@full-stack-nextjs/db';
 
 export async function GET() {
   try {
+    console.log('Applications API: Starting GET request');
+    
     const session = await auth();
+    console.log('Applications API: Session:', session?.user?.id ? 'Authenticated' : 'Not authenticated');
+    
     if (!session?.user?.id) {
+      console.log('Applications API: Unauthorized - No user session');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const userId = session.user.id;
+    console.log('Applications API: Fetching applications for user:', userId);
 
     // Fetch user's applications with scheme details
     const applications = await prisma.application.findMany({
@@ -28,6 +34,8 @@ export async function GET() {
       },
       orderBy: { appliedAt: 'desc' },
     });
+
+    console.log('Applications API: Found', applications.length, 'applications');
 
     // Calculate stats
     const stats = {
@@ -66,8 +74,17 @@ export async function GET() {
       stats,
     });
   } catch (error) {
-    console.error('Failed to fetch applications:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error('Applications API: Failed to fetch applications:', error);
+    console.error('Applications API: Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+    
+    // Return proper JSON error response
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error occurred'
+    }, { status: 500 });
   }
 }
 

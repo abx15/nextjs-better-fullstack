@@ -70,6 +70,17 @@ export default function ApplicationTrackerPage() {
     setLoading(true);
     try {
       const response = await fetch("/api/applications");
+      
+      // Check if response is ok and content type is JSON
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Response is not JSON");
+      }
+      
       const data = await response.json();
       setApplications(data.applications || []);
     } catch (error) {
@@ -188,6 +199,8 @@ export default function ApplicationTrackerPage() {
           notes: "",
         });
         fetchApplications();
+      } else {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
     } catch (error) {
       console.error("Failed to add application:", error);
@@ -214,6 +227,8 @@ export default function ApplicationTrackerPage() {
           rejectionReason: "",
         });
         fetchApplications();
+      } else {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
     } catch (error) {
       console.error("Failed to update application:", error);
@@ -256,12 +271,12 @@ export default function ApplicationTrackerPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* TOP STATS BAR */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1 md:gap-2">
         <button
           onClick={() => setSelectedStatus("all")}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`px-2 md:px-4 py-1 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-colors ${
             selectedStatus === "all"
               ? "bg-[#1a3a6b] text-white"
               : "bg-gray-100 hover:bg-gray-200 text-gray-700"
@@ -271,7 +286,7 @@ export default function ApplicationTrackerPage() {
         </button>
         <button
           onClick={() => setSelectedStatus("applied")}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`px-2 md:px-4 py-1 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-colors ${
             selectedStatus === "applied"
               ? "bg-blue-500 text-white"
               : "bg-gray-100 hover:bg-gray-200 text-gray-700"
@@ -281,7 +296,7 @@ export default function ApplicationTrackerPage() {
         </button>
         <button
           onClick={() => setSelectedStatus("under_review")}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`px-2 md:px-4 py-1 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-colors ${
             selectedStatus === "under_review"
               ? "bg-yellow-500 text-white"
               : "bg-gray-100 hover:bg-gray-200 text-gray-700"
@@ -291,7 +306,7 @@ export default function ApplicationTrackerPage() {
         </button>
         <button
           onClick={() => setSelectedStatus("approved")}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`px-2 md:px-4 py-1 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-colors ${
             selectedStatus === "approved"
               ? "bg-green-500 text-white"
               : "bg-gray-100 hover:bg-gray-200 text-gray-700"
@@ -301,7 +316,7 @@ export default function ApplicationTrackerPage() {
         </button>
         <button
           onClick={() => setSelectedStatus("rejected")}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`px-2 md:px-4 py-1 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-colors ${
             selectedStatus === "rejected"
               ? "bg-red-500 text-white"
               : "bg-gray-100 hover:bg-gray-200 text-gray-700"
@@ -311,240 +326,181 @@ export default function ApplicationTrackerPage() {
         </button>
       </div>
 
-      {/* FILTER TABS */}
-      <div className="flex gap-4 border-b border-gray-200">
-        {["all", "applied", "under_review", "approved", "rejected"].map((status) => (
-          <button
-            key={status}
-            onClick={() => setSelectedStatus(status)}
-            className={`pb-3 px-1 text-sm font-medium transition-colors border-b-2 ${
-              selectedStatus === status
-                ? "border-[#1a3a6b] text-[#1a3a6b]"
-                : "border-transparent text-gray-500 hover:text-gray-700"
-            }`}
+      {/* APPLICATIONS LIST */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4">
+        {filteredApplications.map((application) => (
+          <Card
+            key={application.id}
+            className="p-3 md:p-4 hover:shadow-md transition-shadow cursor-pointer"
+            onClick={() => openUpdateModal(application)}
           >
-            {status === "all" && "सभी"}
-            {status === "applied" && "Applied"}
-            {status === "under_review" && "Under Review"}
-            {status === "approved" && "Approved"}
-            {status === "rejected" && "Rejected"}
-          </button>
+            <div className="flex justify-between items-start mb-2 md:mb-3">
+              <div className="min-w-0 flex-1">
+                <h3 className="text-sm md:text-base font-semibold text-gray-800 truncate">
+                  {application.schemeName}
+                </h3>
+                <p className="text-xs md:text-sm text-gray-600 truncate">
+                  {application.ministry}
+                </p>
+              </div>
+              <span
+                className={`px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2 ${
+                  getStatusColor(application.status)
+                }`}
+              >
+                {getStatusLabel(application.status)}
+              </span>
+            </div>
+
+            <div className="space-y-1 md:space-y-2">
+              <div className="flex justify-between items-center text-xs md:text-sm">
+                <span className="text-gray-500">Applied:</span>
+                <span className="text-gray-700">
+                  {new Date(application.appliedAt).toLocaleDateString("hi-IN")}
+                </span>
+              </div>
+              
+              {application.referenceNo && (
+                <div className="flex justify-between items-center text-xs md:text-sm">
+                  <span className="text-gray-500">Ref No:</span>
+                  <span className="text-gray-700 font-mono text-xs truncate ml-2">
+                    {application.referenceNo}
+                  </span>
+                </div>
+              )}
+              
+              {application.benefitAmount && (
+                <div className="flex justify-between items-center text-xs md:text-sm">
+                  <span className="text-gray-500">Benefit:</span>
+                  <span className="text-green-600 font-medium">
+                    {application.benefitAmount}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {application.notes && (
+              <div className="mt-2 md:mt-3 p-2 bg-gray-50 rounded text-xs md:text-sm text-gray-600">
+                <span className="font-medium">Notes:</span> {application.notes}
+              </div>
+            )}
+
+            <div className="mt-2 md:mt-3 flex justify-between items-center">
+              <button className="text-xs md:text-sm text-[#1a3a6b] hover:text-[#1a3a6b]/80 font-medium">
+                View Details →
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteApplication(application.id);
+                }}
+                className="text-xs md:text-sm text-red-500 hover:text-red-700 font-medium"
+              >
+                Delete
+              </button>
+            </div>
+          </Card>
         ))}
       </div>
 
       {/* ADD APPLICATION BUTTON */}
-      <div className="flex justify-end">
-        <Button
-          onClick={() => setShowAddModal(true)}
-          className="bg-[#FF6B00] hover:bg-[#FF6B00]/90"
-        >
-          नया आवेदन जोड़ें +
-        </Button>
-      </div>
-
-      {/* APPLICATIONS LIST */}
-      {filteredApplications.length === 0 ? (
-        <EmptyState
-          icon="📋"
-          titleHindi="कोई आवेदन नहीं मिला"
-          descriptionHindi="अपना पहला आवेदन जोड़ें"
-          actionLabel="नया आवेदन जोड़ें"
-          onAction={() => setShowAddModal(true)}
-        />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredApplications.map((application) => (
-            <Card
-              key={application.id}
-              className={`p-6 ${
-                application.status === "approved"
-                  ? "border-green-200 bg-green-50"
-                  : application.status === "rejected"
-                  ? "border-red-200 bg-red-50"
-                  : ""
-              }`}
-            >
-              {/* Header */}
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <Badge className={`mb-2 ${getStatusColor(application.status)}`}>
-                    {getStatusLabel(application.status)}
-                  </Badge>
-                  <h3 className="font-semibold text-lg text-gray-800 mb-1">
-                    {application.schemeName}
-                  </h3>
-                  <p className="text-sm text-gray-600">{application.ministry}</p>
-                </div>
-              </div>
-
-              {/* Timeline */}
-              <div className="mb-4">
-                <ApplicationTimeline
-                  steps={application.timeline.map(item => ({
-                    label: item.status === 'applied' ? 'आवेदन' :
-                           item.status === 'under_review' ? 'मिला' :
-                           item.status === 'approved' ? 'स्वीकृत' :
-                           item.status === 'rejected' ? 'अस्वीकृत' : item.status,
-                    date: new Date(item.date).toLocaleDateString("hi-IN", {
-                      day: "numeric",
-                      month: "short"
-                    }),
-                    status: item.status === application.status ? "active" : "completed"
-                  }))}
-                />
-              </div>
-
-              {/* Reference Number */}
-              {application.referenceNo && (
-                <div className="mb-4">
-                  <p className="text-xs text-gray-500">Reference:</p>
-                  <p className="text-sm font-mono">{application.referenceNo}</p>
-                </div>
-              )}
-
-              {/* Applied Date */}
-              <div className="mb-4">
-                <p className="text-xs text-gray-500">Applied:</p>
-                <p className="text-sm">
-                  {application.appliedAt.toLocaleDateString("hi-IN", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </p>
-              </div>
-
-              {/* Benefit Info (for approved) */}
-              {application.status === "approved" && application.benefitAmount && (
-                <div className="mb-4 p-3 bg-green-100 rounded-lg">
-                  <p className="text-sm font-medium text-green-800">
-                    लाभ: {application.benefitAmount}
-                  </p>
-                  {application.nextInstallment && (
-                    <p className="text-xs text-green-600 mt-1">
-                      Next: {application.nextInstallment.amount} in{" "}
-                      {Math.ceil(
-                        (application.nextInstallment.expectedDate.getTime() - Date.now()) /
-                          (1000 * 60 * 60 * 24)
-                      )} days
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {/* Rejection Reason */}
-              {application.status === "rejected" && application.rejectionReason && (
-                <div className="mb-4 p-3 bg-red-100 rounded-lg">
-                  <p className="text-sm font-medium text-red-800 mb-1">
-                    अस्वीकृत क्यों हुआ:
-                  </p>
-                  <p className="text-sm text-red-700">{application.rejectionReason}</p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mt-2 text-xs border-red-200 text-red-700 hover:bg-red-50"
-                  >
-                    ठीक करके दोबारा Apply करें →
-                  </Button>
-                </div>
-              )}
-
-              {/* Actions */}
-              <div className="flex gap-2 pt-4 border-t border-gray-200">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => console.log("View details:", application.id)}
-                >
-                  Details →
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => openUpdateModal(application)}
-                >
-                  Status Update करें
-                </Button>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
+      <button
+        onClick={() => setShowAddModal(true)}
+        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 w-12 h-12 md:w-14 md:h-14 bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white rounded-full shadow-lg flex items-center justify-center text-xl md:text-2xl font-bold transition-colors z-10"
+      >
+        +
+      </button>
 
       {/* ADD APPLICATION MODAL */}
       <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
-        <DialogContent>
+        <DialogContent className="w-[95%] md:w-full max-w-md mx-auto">
           <DialogHeader>
-            <DialogTitle>नया आवेदन जोड़ें</DialogTitle>
-            <DialogDescription>
-              अपने द्वारा आवेदन की गई योजना का विवरण दर्ज करें
+            <DialogTitle className="text-lg md:text-xl">Add New Application</DialogTitle>
+            <DialogDescription className="text-sm md:text-base">
+              Enter the details of your government scheme application.
             </DialogDescription>
           </DialogHeader>
-          
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             <div>
-              <label className="text-sm font-medium">Scheme search</label>
+              <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+                Scheme Name *
+              </label>
               <Input
-                placeholder="Type to search all schemes"
                 value={newApplication.schemeName}
                 onChange={(e) => setNewApplication({ ...newApplication, schemeName: e.target.value })}
+                placeholder="e.g., PM-KISAN Samman Nidhi"
+                className="text-sm md:text-base"
               />
             </div>
-            
             <div>
-              <label className="text-sm font-medium">Application date</label>
+              <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+                Application Date *
+              </label>
               <Input
                 type="date"
                 value={newApplication.applicationDate}
                 onChange={(e) => setNewApplication({ ...newApplication, applicationDate: e.target.value })}
+                className="text-sm md:text-base"
               />
             </div>
-            
             <div>
-              <label className="text-sm font-medium">Reference number (optional)</label>
+              <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+                Reference Number
+              </label>
               <Input
-                placeholder="Application reference number"
                 value={newApplication.referenceNo}
                 onChange={(e) => setNewApplication({ ...newApplication, referenceNo: e.target.value })}
+                placeholder="Application reference number"
+                className="text-sm md:text-base"
               />
             </div>
-            
             <div>
-              <label className="text-sm font-medium">Notes (optional)</label>
-              <Textarea
-                placeholder="Any additional notes"
+              <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+                Notes
+              </label>
+              <textarea
                 value={newApplication.notes}
                 onChange={(e) => setNewApplication({ ...newApplication, notes: e.target.value })}
+                placeholder="Additional notes or documents required"
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-[#1a3a6b]"
               />
             </div>
           </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAddModal(false)}>
+          <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2 mt-4">
+            <Button
+              variant="outline"
+              onClick={() => setShowAddModal(false)}
+              className="w-full sm:w-auto text-sm md:text-base"
+            >
               Cancel
             </Button>
-            <Button onClick={handleAddApplication} className="bg-[#FF6B00] hover:bg-[#FF6B00]/90">
-              आवेदन जोड़ें
+            <Button
+              onClick={handleAddApplication}
+              disabled={!newApplication.schemeName || !newApplication.applicationDate}
+              className="w-full sm:w-auto bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-sm md:text-base"
+            >
+              Add Application
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* UPDATE STATUS MODAL */}
+      {/* UPDATE APPLICATION MODAL */}
       <Dialog open={showUpdateModal} onOpenChange={setShowUpdateModal}>
-        <DialogContent>
+        <DialogContent className="w-[95%] md:w-full max-w-md mx-auto">
           <DialogHeader>
-            <DialogTitle>Status Update करें</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-lg md:text-xl">Status Update करें</DialogTitle>
+            <DialogDescription className="text-sm md:text-base">
               अपने आवेदन का नवीनतम स्टेटस अपडेट करें
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             <div>
-              <label className="text-sm font-medium">Status</label>
+              <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Status</label>
               <Select value={updateForm.status} onValueChange={(value) => setUpdateForm({ ...updateForm, status: value })}>
-                <SelectTrigger>
+                <SelectTrigger className="text-sm md:text-base">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -559,39 +515,42 @@ export default function ApplicationTrackerPage() {
             
             {updateForm.status === "rejected" && (
               <div>
-                <label className="text-sm font-medium">Rejection reason</label>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Rejection reason</label>
                 <Textarea
                   placeholder="Why was it rejected?"
                   value={updateForm.rejectionReason}
                   onChange={(e) => setUpdateForm({ ...updateForm, rejectionReason: e.target.value })}
+                  className="text-sm md:text-base"
                 />
               </div>
             )}
             
             <div>
-              <label className="text-sm font-medium">Reference number</label>
+              <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Reference number</label>
               <Input
                 placeholder="Update reference number"
                 value={updateForm.referenceNo}
                 onChange={(e) => setUpdateForm({ ...updateForm, referenceNo: e.target.value })}
+                className="text-sm md:text-base"
               />
             </div>
             
             <div>
-              <label className="text-sm font-medium">Notes</label>
+              <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Notes</label>
               <Textarea
                 placeholder="Update notes"
                 value={updateForm.notes}
                 onChange={(e) => setUpdateForm({ ...updateForm, notes: e.target.value })}
+                className="text-sm md:text-base"
               />
             </div>
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowUpdateModal(false)}>
+          <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2 mt-4">
+            <Button variant="outline" onClick={() => setShowUpdateModal(false)} className="w-full sm:w-auto text-sm md:text-base">
               Cancel
             </Button>
-            <Button onClick={handleUpdateApplication} className="bg-[#FF6B00] hover:bg-[#FF6B00]/90">
+            <Button onClick={handleUpdateApplication} className="w-full sm:w-auto bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-sm md:text-base">
               Update करें
             </Button>
           </DialogFooter>

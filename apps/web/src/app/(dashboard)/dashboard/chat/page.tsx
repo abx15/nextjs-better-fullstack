@@ -41,6 +41,9 @@ export default function ChatPage() {
     },
   });
 
+  // Ensure input is always defined
+  const safeInput = input || "";
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -214,8 +217,8 @@ export default function ChatPage() {
       {/* LEFT SIDEBAR - Chat History */}
       <div
         className={`${
-          sidebarOpen ? "w-64" : "w-0"
-        } transition-all duration-300 ease-in-out bg-[#f0f4f8] border-r border-gray-200 overflow-hidden flex flex-col`}
+          sidebarOpen ? "w-64 md:w-72" : "w-0"
+        } transition-all duration-300 ease-in-out bg-[#f0f4f8] border-r border-gray-200 overflow-hidden flex flex-col hidden md:flex`}
       >
         <div className="p-4 flex-1 flex flex-col">
           {/* New Chat Button */}
@@ -296,31 +299,41 @@ export default function ChatPage() {
       </div>
 
       {/* MAIN CHAT AREA */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* TOP BAR */}
-        <div className="bg-white border-b border-gray-200 px-4 py-3">
+        <div className="bg-white border-b border-gray-200 px-2 md:px-4 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
+              {/* Mobile Menu Toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="md:hidden"
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
               {!sidebarOpen && (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setSidebarOpen(true)}
+                  className="md:hidden"
                 >
                   <Plus className="w-4 h-4" />
                 </Button>
               )}
-              <h2 className="text-lg font-semibold text-gray-800">
+              <h2 className="text-sm md:text-lg font-semibold text-gray-800 truncate">
                 {currentSession?.title || "AI साथी"}
               </h2>
             </div>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
               {/* Language Selector */}
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                className="px-3 py-1 text-sm border border-gray-200 rounded-lg"
+                className="px-2 md:px-3 py-1 text-xs md:text-sm border border-gray-200 rounded-lg"
               >
                 <option value="hi">हिंदी</option>
                 <option value="en">English</option>
@@ -341,27 +354,27 @@ export default function ChatPage() {
 
         {/* MESSAGES AREA */}
         <div className="flex-1 overflow-y-auto bg-white">
-          <div className="max-w-4xl mx-auto p-4 space-y-4">
+          <div className="max-w-4xl mx-auto p-2 md:p-4 space-y-4">
             {/* Date Separator */}
             <div className="text-center py-2">
-              <span className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+              <span className="text-xs text-gray-500 bg-gray-100 px-2 md:px-3 py-1 rounded-full">
                 आज, {new Date().toLocaleDateString("hi-IN", { day: "numeric", month: "long", year: "numeric" })}
               </span>
             </div>
 
             {/* Messages */}
             {messages.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">💬</div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">
+              <div className="text-center py-6 md:py-12">
+                <div className="text-4xl md:text-6xl mb-4">💬</div>
+                <h3 className="text-sm md:text-lg font-semibold text-gray-700 mb-2">
                   AI साथी से बात करें
                 </h3>
-                <p className="text-gray-500 mb-6">
+                <p className="text-xs md:text-sm text-gray-500 mb-4 md:mb-6">
                   कोई भी सरकारी योजना का सवाल हिंदी में पूछें
                 </p>
                 
                 {/* Quick Questions */}
-                <div className="flex flex-wrap justify-center gap-2 mb-6">
+                <div className="flex flex-wrap justify-center gap-1 md:gap-2 mb-4 md:mb-6">
                   {quickQuestions.map((question, index) => (
                     <button
                       key={index}
@@ -380,7 +393,7 @@ export default function ChatPage() {
                         form.requestSubmit();
                         document.body.removeChild(form);
                       }}
-                      className="px-4 py-2 bg-[#f0f4f8] hover:bg-[#e2e8f0] rounded-full text-sm text-gray-700 transition-colors"
+                      className="px-2 md:px-4 py-1 md:py-2 bg-[#f0f4f8] hover:bg-[#e2e8f0] rounded-full text-xs md:text-sm text-gray-700 transition-colors"
                     >
                       {question}
                     </button>
@@ -394,22 +407,22 @@ export default function ChatPage() {
                   className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   {message.role === "assistant" ? (
-                    <div className="flex gap-3 max-w-[80%]">
-                      <div className="w-8 h-8 rounded-full bg-[#1a3a6b] flex items-center justify-center flex-shrink-0">
-                        <span className="text-white text-sm">🏛️</span>
+                    <div className="flex gap-2 md:gap-3 max-w-[85%] md:max-w-[80%]">
+                      <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-[#1a3a6b] flex items-center justify-center flex-shrink-0">
+                        <span className="text-white text-xs md:text-sm">🏛️</span>
                       </div>
-                      <Card className="bg-white border-l-4 border-l-[#1a3a6b] p-4 shadow-sm">
-                        <p className="text-gray-800 whitespace-pre-wrap">{message.content}</p>
+                      <Card className="bg-white border-l-4 border-l-[#1a3a6b] p-2 md:p-4 shadow-sm">
+                        <p className="text-xs md:text-sm text-gray-800 whitespace-pre-wrap">{message.content}</p>
                         <div className="flex items-center justify-between mt-2">
                           <p className="text-xs text-gray-500">
                             {new Date().toLocaleTimeString("hi-IN", { hour: "2-digit", minute: "2-digit" })}
                           </p>
-                          <div className="flex gap-2">
-                            <Button variant="ghost" size="sm" className="text-xs">
+                          <div className="flex gap-1 md:gap-2">
+                            <Button variant="ghost" size="sm" className="text-xs hidden md:flex">
                               📋 Copy
                             </Button>
                             {voiceEnabled && (
-                              <Button variant="ghost" size="sm" className="text-xs">
+                              <Button variant="ghost" size="sm" className="text-xs hidden md:flex">
                                 🔊 सुनें
                               </Button>
                             )}
@@ -418,8 +431,8 @@ export default function ChatPage() {
                       </Card>
                     </div>
                   ) : (
-                    <Card className="bg-[#FF6B00] text-white p-4 max-w-[80%] shadow-sm">
-                      <p className="whitespace-pre-wrap">{message.content}</p>
+                    <Card className="bg-[#FF6B00] text-white p-2 md:p-4 max-w-[85%] md:max-w-[80%] shadow-sm">
+                      <p className="text-xs md:text-sm whitespace-pre-wrap">{message.content}</p>
                       <p className="text-xs text-white/80 mt-2 text-right">
                         {new Date().toLocaleTimeString("hi-IN", { hour: "2-digit", minute: "2-digit" })}
                       </p>
@@ -432,13 +445,13 @@ export default function ChatPage() {
             {/* AI Typing Indicator */}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="flex gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#1a3a6b] flex items-center justify-center flex-shrink-0">
-                    <span className="text-white text-sm">🏛️</span>
+                <div className="flex gap-2 md:gap-3">
+                  <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-[#1a3a6b] flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-xs md:text-sm">🏛️</span>
                   </div>
-                  <Card className="bg-white border-l-4 border-l-[#1a3a6b] p-4 shadow-sm">
+                  <Card className="bg-white border-l-4 border-l-[#1a3a6b] p-2 md:p-4 shadow-sm">
                     <AITypingIndicator />
-                    <p className="text-gray-600 mt-2">AI साथी सोच रहा है...</p>
+                    <p className="text-xs md:text-sm text-gray-600 mt-2">AI साथी सोच रहा है...</p>
                   </Card>
                 </div>
               </div>
@@ -451,7 +464,7 @@ export default function ChatPage() {
         {/* INPUT AREA */}
         <div className="bg-white border-t border-gray-200">
           {/* Quick Chips */}
-          <div className="px-4 py-2 flex gap-2 overflow-x-auto">
+          <div className="px-2 md:px-4 py-2 flex gap-1 md:gap-2 overflow-x-auto">
             {quickQuestions.map((question, index) => (
               <button
                 key={index}
@@ -469,7 +482,7 @@ export default function ChatPage() {
                   form.requestSubmit();
                   document.body.removeChild(form);
                 }}
-                className="px-3 py-1 bg-[#f0f4f8] hover:bg-[#e2e8f0] rounded-full text-xs text-gray-700 whitespace-nowrap transition-colors"
+                className="px-2 md:px-3 py-1 bg-[#f0f4f8] hover:bg-[#e2e8f0] rounded-full text-xs text-gray-700 whitespace-nowrap transition-colors"
               >
                 {question}
               </button>
@@ -477,7 +490,7 @@ export default function ChatPage() {
           </div>
 
           {/* Main Input */}
-          <div className="px-4 pb-4">
+          <div className="px-2 md:px-4 pb-4">
             <form onSubmit={handleSubmit} className="flex items-center gap-2">
               {/* Voice Button */}
               <div className="flex-shrink-0">
@@ -497,19 +510,19 @@ export default function ChatPage() {
               {/* Text Input */}
               <Input
                 ref={inputRef}
-                value={input}
+                value={safeInput}
                 onChange={handleInputChange}
                 placeholder="Type here..."
-                className="flex-1 min-h-[40px] max-h-[120px]"
+                className="flex-1 min-h-[36px] md:min-h-[40px] max-h-[100px] md:max-h-[120px] text-sm md:text-base"
                 disabled={isLoading}
               />
 
               {/* Send Button */}
               <Button
                 type="submit"
-                disabled={isLoading || !input.trim()}
+                disabled={isLoading || !safeInput.trim()}
                 className={`flex-shrink-0 ${
-                  input.trim() ? "bg-[#FF6B00] hover:bg-[#FF6B00]/90" : "bg-gray-300"
+                  safeInput.trim() ? "bg-[#FF6B00] hover:bg-[#FF6B00]/90" : "bg-gray-300"
                 }`}
               >
                 {isLoading ? (
@@ -520,7 +533,7 @@ export default function ChatPage() {
               </Button>
             </form>
 
-            <p className="text-xs text-gray-500 text-center mt-2">
+            <p className="text-xs text-gray-500 text-center mt-2 px-2">
               AI जानकारी देता है, official confirmation के लिए govt site देखें
             </p>
           </div>
