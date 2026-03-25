@@ -1,0 +1,23 @@
+# PostgreSQL Dockerfile for Render
+FROM postgres:15-alpine
+
+# Set environment variables
+ENV POSTGRES_DB=sarkarisaathi
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=postgres
+
+# Create a custom health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+  CMD pg_isready -U postgres -d sarkarisaathi || exit 1
+
+# Expose PostgreSQL port
+EXPOSE 5432
+
+# Set data directory
+ENV PGDATA=/var/lib/postgresql/data/pgdata
+
+# Create initialization script
+COPY init.sql /docker-entrypoint-initdb.d/
+
+# Run PostgreSQL
+CMD ["postgres"]

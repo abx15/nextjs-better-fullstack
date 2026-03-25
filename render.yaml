@@ -1,0 +1,66 @@
+services:
+  # Web Service
+  - type: web
+    name: sarkari-saathi-web
+    env: node
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXTAUTH_URL
+        sync: false
+      - key: NEXTAUTH_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: SARVAM_API_KEY
+        sync: false
+      - key: REDIS_URL
+        sync: false
+    healthCheckPath: /api/health
+    autoDeploy: true
+
+  # PostgreSQL Database
+  - type: pserv
+    name: sarkari-saathi-db
+    env: docker
+    dockerfilePath: ./Dockerfile.postgres
+    envVars:
+      - key: POSTGRES_DB
+        value: sarkarisaathi
+      - key: POSTGRES_USER
+        value: postgres
+      - key: POSTGRES_PASSWORD
+        generateValue: true
+      - key: POSTGRES_INITDB_ARGS
+        value: "--encoding=UTF-8"
+    healthCheckPath: /health
+    disk:
+      name: postgres-data
+      mountPath: /var/lib/postgresql/data
+      sizeGB: 10
+
+  # Redis for caching
+  - type: redis
+    name: sarkari-saathi-redis
+    ipAllowList: []
+    plan: free
+    maxMemoryPolicy: allkeys-lru
+
+# Global environment variables
+globalEnvVars:
+  - key: NODE_VERSION
+    value: 18.x
+  - key: NPM_VERSION
+    value: latest
+
+# Build and deployment settings
+build:
+  rootDirectory: .
+  dockerfilePath: ./Dockerfile
+
+# Custom domains (optional)
+domains:
+  - domain: sarkarisaathi.com
+    type: primary
