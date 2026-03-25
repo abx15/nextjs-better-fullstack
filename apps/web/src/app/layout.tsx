@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Noto_Sans_Devanagari } from "next/font/google";
 import "../index.css";
 import Providers from "@/components/providers";
+import { HydrationFix } from "@/components/hydration-fix";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -42,7 +43,9 @@ export default function RootLayout({
     <html lang="hi" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${notoDevanagari.variable} antialiased`}
+        suppressHydrationWarning={true}
       >
+        <HydrationFix />
         <Providers>{children}</Providers>
       </body>
     </html>

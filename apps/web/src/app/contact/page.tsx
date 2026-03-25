@@ -107,30 +107,30 @@ export default function ContactPage() {
       <Header />
 
       {/* Hero Section */}
-      <div className="bg-navy-gradient text-white py-16">
+      <div className="bg-navy-gradient text-white py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 font-hindi">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 font-hindi">
               संपर्क करें
             </h1>
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto font-hindi">
+            <p className="text-base sm:text-lg lg:text-xl text-blue-100 max-w-3xl mx-auto font-hindi">
               हमारी टीम से जुड़ें और अपने सवालों का हल पाएं। हम यहां आपकी सेवा में हैं।
             </p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Contact Form */}
           <div className="lg:col-span-2">
-            <Card className="p-8 border-sarkari-navy-light/20">
-              <h2 className="text-2xl font-bold text-sarkari-navy mb-6 font-hindi">
+            <Card className="p-4 sm:p-6 lg:p-8 border-sarkari-navy-light/20">
+              <h2 className="text-xl sm:text-2xl font-bold text-sarkari-navy mb-4 sm:mb-6 font-hindi">
                 हमें संदेश भेजें
               </h2>
               
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2 font-hindi">
                       पूरा नाम *
@@ -141,7 +141,7 @@ export default function ContactPage() {
                       value={formData.name}
                       onChange={handleInputChange}
                       required
-                      className="border-sarkari-navy-light/30 focus:border-sarkari-saffron focus:ring-sarkari-saffron"
+                      className="border-sarkari-navy-light/30 focus:border-sarkari-saffron focus:ring-sarkari-saffron h-10 sm:h-12 text-sm sm:text-base"
                       placeholder="अपना पूरा नाम दर्ज करें"
                     />
                   </div>
@@ -156,7 +156,7 @@ export default function ContactPage() {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className="border-sarkari-navy-light/30 focus:border-sarkari-saffron focus:ring-sarkari-saffron"
+                      className="border-sarkari-navy-light/30 focus:border-sarkari-saffron focus:ring-sarkari-saffron h-10 sm:h-12 text-sm sm:text-base"
                       placeholder="अपना ईमेल दर्ज करें"
                     />
                   </div>
@@ -171,7 +171,7 @@ export default function ContactPage() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="border-sarkari-navy-light/30 focus:border-sarkari-saffron focus:ring-sarkari-saffron"
+                    className="border-sarkari-navy-light/30 focus:border-sarkari-saffron focus:ring-sarkari-saffron h-10 sm:h-12 text-sm sm:text-base"
                     placeholder="अपना फोन नंबर दर्ज करें"
                   />
                 </div>
@@ -186,7 +186,7 @@ export default function ContactPage() {
                     value={formData.subject}
                     onChange={handleInputChange}
                     required
-                    className="border-sarkari-navy-light/30 focus:border-sarkari-saffron focus:ring-sarkari-saffron"
+                    className="border-sarkari-navy-light/30 focus:border-sarkari-saffron focus:ring-sarkari-saffron h-10 sm:h-12 text-sm sm:text-base"
                     placeholder="अपना विषय दर्ज करें"
                   />
                 </div>
@@ -201,7 +201,7 @@ export default function ContactPage() {
                     onChange={handleInputChange}
                     required
                     rows={6}
-                    className="border-sarkari-navy-light/30 focus:border-sarkari-saffron focus:ring-sarkari-saffron"
+                    className="border-sarkari-navy-light/30 focus:border-sarkari-saffron focus:ring-sarkari-saffron text-sm sm:text-base"
                     placeholder="अपना संदेश यहां लिखें..."
                   />
                 </div>
@@ -209,7 +209,7 @@ export default function ContactPage() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-sarkari-saffron hover:bg-sarkari-saffron-dark text-white py-3"
+                  className="w-full bg-sarkari-saffron hover:bg-sarkari-saffron-dark text-white py-2 sm:py-3 h-10 sm:h-12 text-sm sm:text-base"
                 >
                   {isSubmitting ? (
                     <>
@@ -228,21 +228,21 @@ export default function ContactPage() {
           </div>
 
           {/* Contact Info */}
-          <div className="space-y-6">
-            <Card className="p-6 border-sarkari-navy-light/20">
-              <h3 className="text-xl font-semibold text-sarkari-navy mb-4 font-hindi">
+          <div className="space-y-4 sm:space-y-6">
+            <Card className="p-4 sm:p-6 border-sarkari-navy-light/20">
+              <h3 className="text-lg sm:text-xl font-semibold text-sarkari-navy mb-3 sm:mb-4 font-hindi">
                 संपर्क जानकारी
               </h3>
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {contactInfo.map((info, index) => {
                   const Icon = info.icon;
                   return (
                     <div key={index} className="flex items-start gap-3">
-                      <Icon className="w-5 h-5 text-sarkari-saffron mt-1 flex-shrink-0" />
+                      <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-sarkari-saffron mt-1 flex-shrink-0" />
                       <div>
-                        <div className="font-medium text-gray-800 font-hindi">{info.label}</div>
-                        <div className="text-gray-600 font-hindi">{info.value}</div>
-                        <div className="text-sm text-gray-500 font-hindi">{info.description}</div>
+                        <div className="font-medium text-gray-800 font-hindi text-sm sm:text-base">{info.label}</div>
+                        <div className="text-gray-600 font-hindi text-sm sm:text-base">{info.value}</div>
+                        <div className="text-xs sm:text-sm text-gray-500 font-hindi">{info.description}</div>
                       </div>
                     </div>
                   );
@@ -250,56 +250,56 @@ export default function ContactPage() {
               </div>
             </Card>
 
-            <Card className="p-6 border-sarkari-navy-light/20">
-              <h3 className="text-xl font-semibold text-sarkari-navy mb-4 font-hindi">
+            <Card className="p-4 sm:p-6 border-sarkari-navy-light/20">
+              <h3 className="text-lg sm:text-xl font-semibold text-sarkari-navy mb-3 sm:mb-4 font-hindi">
                 कार्यकाली समय
               </h3>
-              <div className="flex items-center gap-3 mb-4">
-                <Clock className="w-5 h-5 text-sarkari-saffron" />
+              <div className="flex items-center gap-3 mb-3 sm:mb-4">
+                <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-sarkari-saffron" />
                 <div>
-                  <div className="font-medium text-gray-800 font-hindi">सोमवार - शुक्रवार</div>
-                  <div className="text-gray-600 font-hindi">सुबह 9:00 बजे - शाम 7:00 बजे</div>
+                  <div className="font-medium text-gray-800 font-hindi text-sm sm:text-base">सोमवार - शुक्रवार</div>
+                  <div className="text-gray-600 font-hindi text-sm sm:text-base">सुबह 9:00 बजे - शाम 7:00 बजे</div>
                 </div>
               </div>
-              <div className="text-sm text-gray-600 font-hindi">
+              <div className="text-xs sm:text-sm text-gray-600 font-hindi">
                 आपातकाल और छुट्टियों पर हम केवल ईमेल समर्थन प्रदान करते हैं।
               </div>
             </Card>
 
-            <Card className="p-6 border-sarkari-navy-light/20">
-              <h3 className="text-xl font-semibold text-sarkari-navy mb-4 font-hindi">
+            <Card className="p-4 sm:p-6 border-sarkari-navy-light/20">
+              <h3 className="text-lg sm:text-xl font-semibold text-sarkari-navy mb-3 sm:mb-4 font-hindi">
                 हमें फॉलो करें
               </h3>
-              <div className="flex gap-3">
+              <div className="flex gap-2 sm:gap-3">
                 <a 
                   href="#" 
-                  className="w-10 h-10 bg-sarkari-navy text-white rounded-full flex items-center justify-center hover:bg-sarkari-saffron transition-colors"
+                  className="w-8 h-8 sm:w-10 sm:h-10 bg-sarkari-navy text-white rounded-full flex items-center justify-center hover:bg-sarkari-saffron transition-colors"
                 >
-                  <Facebook className="w-5 h-5" />
+                  <Facebook className="w-3 h-3 sm:w-5 sm:h-5" />
                 </a>
                 <a 
                   href="#" 
-                  className="w-10 h-10 bg-sarkari-navy text-white rounded-full flex items-center justify-center hover:bg-sarkari-saffron transition-colors"
+                  className="w-8 h-8 sm:w-10 sm:h-10 bg-sarkari-navy text-white rounded-full flex items-center justify-center hover:bg-sarkari-saffron transition-colors"
                 >
-                  <Twitter className="w-5 h-5" />
+                  <Twitter className="w-3 h-3 sm:w-5 sm:h-5" />
                 </a>
                 <a 
                   href="#" 
-                  className="w-10 h-10 bg-sarkari-navy text-white rounded-full flex items-center justify-center hover:bg-sarkari-saffron transition-colors"
+                  className="w-8 h-8 sm:w-10 sm:h-10 bg-sarkari-navy text-white rounded-full flex items-center justify-center hover:bg-sarkari-saffron transition-colors"
                 >
-                  <Linkedin className="w-5 h-5" />
+                  <Linkedin className="w-3 h-3 sm:w-5 sm:h-5" />
                 </a>
                 <a 
                   href="#" 
-                  className="w-10 h-10 bg-sarkari-navy text-white rounded-full flex items-center justify-center hover:bg-sarkari-saffron transition-colors"
+                  className="w-8 h-8 sm:w-10 sm:h-10 bg-sarkari-navy text-white rounded-full flex items-center justify-center hover:bg-sarkari-saffron transition-colors"
                 >
-                  <Instagram className="w-5 h-5" />
+                  <Instagram className="w-3 h-3 sm:w-5 sm:h-5" />
                 </a>
                 <a 
                   href="#" 
-                  className="w-10 h-10 bg-sarkari-navy text-white rounded-full flex items-center justify-center hover:bg-sarkari-saffron transition-colors"
+                  className="w-8 h-8 sm:w-10 sm:h-10 bg-sarkari-navy text-white rounded-full flex items-center justify-center hover:bg-sarkari-saffron transition-colors"
                 >
-                  <Youtube className="w-5 h-5" />
+                  <Youtube className="w-3 h-3 sm:w-5 sm:h-5" />
                 </a>
               </div>
             </Card>
@@ -308,27 +308,27 @@ export default function ContactPage() {
       </div>
 
       {/* FAQ Section */}
-      <div className="py-16 bg-white">
+      <div className="py-12 sm:py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-sarkari-navy mb-4 font-hindi">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-sarkari-navy mb-3 sm:mb-4 font-hindi">
               अक्सर पूछे जाने वाले सवाल
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-hindi">
+            <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto font-hindi">
               आपके सामान्य सवालों के जवाब
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
             {faqs.map((faq, index) => (
-              <Card key={index} className="p-6 border-sarkari-navy-light/20">
-                <div className="flex items-start gap-3 mb-3">
-                  <HelpCircle className="w-5 h-5 text-sarkari-saffron mt-1 flex-shrink-0" />
-                  <h3 className="text-lg font-semibold text-sarkari-navy font-hindi">
+              <Card key={index} className="p-4 sm:p-6 border-sarkari-navy-light/20">
+                <div className="flex items-start gap-3 mb-2 sm:mb-3">
+                  <HelpCircle className="w-4 h-4 sm:w-5 sm:h-5 text-sarkari-saffron mt-1 flex-shrink-0" />
+                  <h3 className="text-base sm:text-lg font-semibold text-sarkari-navy font-hindi">
                     {faq.question}
                   </h3>
                 </div>
-                <p className="text-gray-600 leading-relaxed font-hindi">
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed font-hindi">
                   {faq.answer}
                 </p>
               </Card>
@@ -338,17 +338,17 @@ export default function ContactPage() {
       </div>
 
       {/* CTA Section */}
-      <div className="bg-navy-gradient text-white py-16">
+      <div className="bg-navy-gradient text-white py-12 sm:py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4 font-hindi">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 font-hindi">
             अभी शुरू करें
           </h2>
-          <p className="text-xl text-blue-100 mb-8 font-hindi">
+          <p className="text-base sm:text-lg lg:text-xl text-blue-100 mb-6 sm:mb-8 font-hindi">
             सरकारी योजनाओं का लाभ उठाने के लिए आज ही अपनी यात्रा शुरू करें
           </p>
           <Button 
             size="lg" 
-            className="bg-sarkari-saffron hover:bg-sarkari-saffron-dark text-white px-8"
+            className="bg-sarkari-saffron hover:bg-sarkari-saffron-dark text-white px-6 sm:px-8 text-sm sm:text-base"
           >
             निःशुल्क साइन अप करें
           </Button>

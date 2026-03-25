@@ -15,7 +15,6 @@ export default function StatsCard({
   icon,
   value,
   label,
-  labelHindi,
   trend,
   className,
 }: StatsCardProps) {
@@ -43,9 +42,6 @@ export default function StatsCard({
       </div>
       <p className="text-2xl font-bold text-foreground">{value}</p>
       <p className="text-sm text-muted-foreground">
-        {labelHindi && (
-          <span className="text-hindi block">{labelHindi}</span>
-        )}
         <span>{label}</span>
       </p>
     </div>

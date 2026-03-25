@@ -12,29 +12,29 @@ import {
   LogIn,
   Languages
 } from "lucide-react";
-import { useTranslation } from "@/lib/i18n";
+import { useLanguage } from "@/contexts/language-context";
+import { LanguageToggle } from "@/components/ui/language-toggle";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentLanguage, setCurrentLanguage] = useState<"hi" | "en">("hi");
-  const t = useTranslation(currentLanguage);
+  const { t } = useLanguage();
 
   const navigation = [
-    { name: t("home"), href: "/" },
-    { name: t("schemes"), href: "/schemes" },
-    { name: t("tracker"), href: "/tracker" },
-    { name: t("chat"), href: "/chat" },
-    { name: t("about"), href: "/about" },
-    { name: t("contact"), href: "/contact" },
+    { name: t("navbar.home"), href: "/" },
+    { name: t("navbar.schemes"), href: "/schemes" },
+    { name: t("navbar.tracker"), href: "/tracker" },
+    { name: t("navbar.chat"), href: "/chat" },
+    { name: t("navbar.about"), href: "/about" },
+    { name: t("navbar.contact"), href: "/contact" },
   ];
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50 border-b border-sarkari-navy-light/20">
+    <header className="bg-white shadow-md sticky top-0 z-50 border-b border-sarkari-navy-light/20" suppressHydrationWarning={true}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
+          <Link href="/" className="flex items-center gap-2 group cursor-pointer">
             <div className="w-10 h-10 bg-sarkari-navy rounded-lg flex items-center justify-center shadow-lg group-hover:bg-sarkari-saffron transition-colors">
               <span className="text-white font-bold text-lg">सै</span>
             </div>
@@ -49,8 +49,8 @@ export default function Header() {
             {navigation.map((item, index) => (
               <Link
                 key={index}
-                href={item.href}
-                className="text-gray-700 hover:text-sarkari-saffron px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-sarkari-bg font-hindi"
+                href={item.href as any}
+                className="text-gray-700 hover:text-sarkari-saffron px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-sarkari-bg font-hindi cursor-pointer"
               >
                 {item.name}
               </Link>
@@ -75,13 +75,13 @@ export default function Header() {
 
             {/* Auth Buttons */}
             <div className="hidden lg:flex items-center space-x-2">
-              <Link href="/login" className="flex items-center gap-2">
+              <Link href="/login" className="flex items-center gap-2 cursor-pointer">
                 <Button variant="outline" size="sm" className="border-sarkari-navy-light/30 text-sarkari-navy hover:bg-sarkari-navy hover:text-white">
                   <LogIn className="w-4 h-4" />
                   <span className="font-hindi">{t("login")}</span>
                 </Button>
               </Link>
-              <Link href="/register" className="flex items-center gap-2">
+              <Link href="/register" className="flex items-center gap-2 cursor-pointer">
                 <Button size="sm" className="bg-sarkari-saffron hover:bg-sarkari-saffron-dark text-white shadow-md">
                   <User className="w-4 h-4" />
                   <span className="font-hindi">{t("register")}</span>
@@ -90,24 +90,12 @@ export default function Header() {
             </div>
 
             {/* Language Toggle */}
-            <div className="relative">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentLanguage(currentLanguage === "hi" ? "en" : "hi")}
-                className="flex items-center gap-2 border-sarkari-navy-light/30 text-sarkari-navy hover:bg-sarkari-navy hover:text-white"
-              >
-                <Languages className="w-4 h-4" />
-                <span className="text-sm font-medium">
-                  {currentLanguage === "hi" ? "EN" : "हिंदी"}
-                </span>
-              </Button>
-            </div>
+            <LanguageToggle variant="ghost" size="sm" />
 
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 rounded-lg hover:bg-sarkari-bg transition-colors"
+              className="md:hidden p-2 rounded-lg hover:bg-sarkari-bg transition-colors cursor-pointer"
             >
               {isMenuOpen ? (
                 <X className="w-6 h-6 text-sarkari-navy" />
@@ -140,9 +128,9 @@ export default function Header() {
                   {navigation.map((item, index) => (
                     <Link
                       key={index}
-                      href={item.href}
+                      href={item.href as any}
                       onClick={() => setIsMenuOpen(false)}
-                      className="block text-gray-700 hover:text-sarkari-saffron hover:bg-sarkari-bg px-4 py-3 rounded-md text-sm font-medium transition-colors font-hindi"
+                      className="block text-gray-700 hover:text-sarkari-saffron hover:bg-sarkari-bg px-4 py-3 rounded-md text-sm font-medium transition-colors font-hindi cursor-pointer"
                     >
                       {item.name}
                     </Link>
@@ -151,13 +139,13 @@ export default function Header() {
 
                 {/* Mobile Auth Buttons */}
                 <div className="flex flex-col space-y-3 pt-4 border-t border-sarkari-navy-light/20">
-                  <Link href="/login" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2">
+                  <Link href="/login" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2 cursor-pointer">
                     <Button variant="outline" size="sm" className="w-full border-sarkari-navy-light/30 text-sarkari-navy hover:bg-sarkari-navy hover:text-white">
                       <LogIn className="w-4 h-4" />
                       <span className="font-hindi">{t("login")}</span>
                     </Button>
                   </Link>
-                  <Link href="/register" onClick={() => setIsMenuOpen(false)}>
+                  <Link href="/register" onClick={() => setIsMenuOpen(false)} className="cursor-pointer">
                     <Button size="sm" className="w-full bg-sarkari-saffron hover:bg-sarkari-saffron-dark text-white">
                       <User className="w-4 h-4" />
                       <span className="font-hindi">{t("register")}</span>
@@ -168,7 +156,7 @@ export default function Header() {
                 {/* Close Button */}
                 <button
                   onClick={() => setIsMenuOpen(false)}
-                  className="absolute top-4 right-4 p-2 rounded-lg hover:bg-sarkari-bg transition-colors"
+                  className="absolute top-4 right-4 p-2 rounded-lg hover:bg-sarkari-bg transition-colors cursor-pointer"
                 >
                   <X className="w-6 h-6 text-sarkari-navy" />
                 </button>

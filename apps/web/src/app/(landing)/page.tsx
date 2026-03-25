@@ -117,8 +117,8 @@ export default function LandingPage() {
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-[var(--sarkari-green)] rounded-full blur-3xl" />
         </div>
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <h1 className="hero-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white text-hindi leading-tight">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 text-center">
+          <h1 className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white text-hindi leading-tight">
             सरकारी योजनाएं
             <br />
             <span className="text-gradient-saffron" style={{ WebkitTextFillColor: "transparent", background: "linear-gradient(135deg, #FF6B00, #FF8B3D)", WebkitBackgroundClip: "text", backgroundClip: "text" }}>
@@ -126,28 +126,28 @@ export default function LandingPage() {
             </span>
           </h1>
 
-          <p className="hero-subtitle mt-6 text-lg sm:text-xl text-white/80 max-w-2xl mx-auto">
+          <p className="hero-subtitle mt-4 sm:mt-6 text-base sm:text-lg lg:text-xl text-white/80 max-w-2xl mx-auto">
             Find government schemes made for <strong>YOU</strong> — in 2 minutes, for free
           </p>
 
-          <div className="hero-cta mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="hero-cta mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
             <Link
               href="/register"
-              className="group px-8 py-4 text-lg font-semibold rounded-xl bg-[var(--sarkari-saffron)] text-white shadow-xl shadow-[var(--sarkari-saffron)]/30 hover:shadow-2xl hover:shadow-[var(--sarkari-saffron)]/40 hover:scale-105 transition-all duration-300 text-hindi"
+              className="group px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-xl bg-[var(--sarkari-saffron)] text-white shadow-xl shadow-[var(--sarkari-saffron)]/30 hover:shadow-2xl hover:shadow-[var(--sarkari-saffron)]/40 hover:scale-105 transition-all duration-300 text-hindi"
             >
               अपनी योजनाएं खोजें →
             </Link>
-            <p className="text-sm text-white/60">
+            <p className="text-xs sm:text-sm text-white/60">
               पहले से <strong className="text-white/90">50,000+</strong> लोग जुड़ चुके हैं
             </p>
           </div>
 
-          <div className="hero-badges mt-10 flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+          <div className="hero-badges mt-6 sm:mt-8 lg:mt-10 flex flex-wrap items-center justify-center gap-2 sm:gap-3 lg:gap-4">
             {["✅ Free", "✅ Hindi Support", "✅ 1000+ Schemes", "✅ Secure"].map(
               (badge) => (
                 <span
                   key={badge}
-                  className="text-sm text-white/70 bg-white/10 px-4 py-1.5 rounded-full"
+                  className="text-xs sm:text-sm text-white/70 bg-white/10 px-3 sm:px-4 py-1.5 rounded-full"
                 >
                   {badge}
                 </span>
@@ -158,34 +158,34 @@ export default function LandingPage() {
       </section>
 
       {/* ─── HOW IT WORKS ─── */}
-      <section ref={stepsRef} className="py-20 bg-background">
+      <section ref={stepsRef} className="py-12 sm:py-16 lg:py-20 bg-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold text-[var(--sarkari-navy)] text-hindi">
+          <div className="text-center mb-10 sm:mb-12 lg:mb-14">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--sarkari-navy)] text-hindi">
               कैसे काम करता है?
             </h2>
-            <p className="mt-3 text-muted-foreground max-w-lg mx-auto">
+            <p className="mt-2 sm:mt-3 text-sm sm:text-base text-muted-foreground max-w-lg mx-auto">
               Just 4 simple steps to find your perfect government scheme
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {howItWorks.map((item) => (
               <div
                 key={item.step}
-                className="step-card group relative rounded-2xl border border-border bg-card p-6 text-center transition-all duration-300 hover:shadow-xl hover:border-[var(--sarkari-saffron)]/30 hover:-translate-y-2"
+                className="step-card group relative rounded-2xl border border-border bg-card p-4 sm:p-6 text-center transition-all duration-300 hover:shadow-xl hover:border-[var(--sarkari-saffron)]/30 hover:-translate-y-2"
               >
-                <div className="absolute -top-3 -left-3 w-8 h-8 rounded-full bg-[var(--sarkari-saffron)] text-white text-xs font-bold flex items-center justify-center shadow-lg">
+                <div className="absolute -top-3 -left-3 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[var(--sarkari-saffron)] text-white text-xs font-bold flex items-center justify-center shadow-lg">
                   {item.step}
                 </div>
-                <span className="text-4xl block mb-4">{item.icon}</span>
-                <h3 className="text-base font-semibold text-[var(--sarkari-navy)] text-hindi">
+                <span className="text-3xl sm:text-4xl block mb-3 sm:mb-4">{item.icon}</span>
+                <h3 className="text-sm sm:text-base font-semibold text-[var(--sarkari-navy)] text-hindi">
                   {item.titleHi}
                 </h3>
                 <p className="text-xs text-muted-foreground mt-1">
                   {item.titleEn}
                 </p>
-                <p className="text-sm text-muted-foreground mt-2 text-hindi">
+                <p className="text-xs sm:text-sm text-muted-foreground mt-2 text-hindi">
                   {item.descHi}
                 </p>
               </div>
@@ -195,19 +195,19 @@ export default function LandingPage() {
       </section>
 
       {/* ─── STATS BAR ─── */}
-      <section ref={statsRef} className="py-12 bg-[var(--sarkari-navy)]">
+      <section ref={statsRef} className="py-8 sm:py-10 lg:py-12 bg-[var(--sarkari-navy)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {stats.map((stat) => (
               <div
                 key={stat.labelEn}
-                className="stat-item text-center py-4"
+                className="stat-item text-center py-3 sm:py-4"
               >
-                <span className="text-3xl block mb-2">{stat.icon}</span>
-                <p className="text-2xl sm:text-3xl font-bold text-white">
+                <span className="text-2xl sm:text-3xl block mb-2">{stat.icon}</span>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">
                   {stat.value}
                 </p>
-                <p className="text-sm text-white/70 text-hindi mt-1">
+                <p className="text-xs sm:text-sm text-white/70 text-hindi mt-1">
                   {stat.labelHi}
                 </p>
               </div>
@@ -217,28 +217,28 @@ export default function LandingPage() {
       </section>
 
       {/* ─── POPULAR SCHEMES ─── */}
-      <section ref={schemesRef} className="py-20 bg-background">
+      <section ref={schemesRef} className="py-12 sm:py-16 lg:py-20 bg-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold text-[var(--sarkari-navy)] text-hindi">
+          <div className="text-center mb-10 sm:mb-12 lg:mb-14">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--sarkari-navy)] text-hindi">
               लोकप्रिय योजनाएं
             </h2>
-            <p className="mt-3 text-muted-foreground">
+            <p className="mt-2 sm:mt-3 text-sm sm:text-base text-muted-foreground">
               Most popular government schemes for Indian citizens
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {schemes.map((scheme) => (
               <div
                 key={scheme.nameHi}
-                className="scheme-card-item group rounded-2xl border border-border bg-card p-5 transition-all duration-300 hover:shadow-xl hover:border-[var(--sarkari-saffron)]/30 hover:-translate-y-1"
+                className="scheme-card-item group rounded-2xl border border-border bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-xl hover:border-[var(--sarkari-saffron)]/30 hover:-translate-y-1"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl">{scheme.icon}</span>
+                    <span className="text-xl sm:text-2xl">{scheme.icon}</span>
                     <div>
-                      <h3 className="text-sm font-semibold text-[var(--sarkari-navy)] text-hindi line-clamp-1">
+                      <h3 className="text-xs sm:text-sm font-semibold text-[var(--sarkari-navy)] text-hindi line-clamp-1">
                         {scheme.nameHi}
                       </h3>
                       <span className="text-[10px] text-muted-foreground">
@@ -255,7 +255,7 @@ export default function LandingPage() {
                     <span className="text-xs text-muted-foreground text-hindi">
                       लाभ:{" "}
                     </span>
-                    <span className="text-sm font-semibold text-[var(--sarkari-green)]">
+                    <span className="text-xs sm:text-sm font-semibold text-[var(--sarkari-green)]">
                       {scheme.benefit}
                     </span>
                   </div>
@@ -270,10 +270,10 @@ export default function LandingPage() {
             ))}
           </div>
 
-          <div className="text-center mt-10">
+          <div className="text-center mt-8 sm:mt-10">
             <Link
               href="/schemes"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-[var(--sarkari-navy)] text-[var(--sarkari-navy)] font-semibold hover:bg-[var(--sarkari-navy)] hover:text-white transition-all text-hindi"
+              className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-xl border-2 border-[var(--sarkari-navy)] text-[var(--sarkari-navy)] font-semibold hover:bg-[var(--sarkari-navy)] hover:text-white transition-all text-hindi text-sm sm:text-base"
             >
               और योजनाएं देखें →
             </Link>
@@ -282,27 +282,27 @@ export default function LandingPage() {
       </section>
 
       {/* ─── TESTIMONIALS ─── */}
-      <section ref={testimonialsRef} className="py-20 bg-[var(--sarkari-bg-alt)]">
+      <section ref={testimonialsRef} className="py-12 sm:py-16 lg:py-20 bg-[var(--sarkari-bg-alt)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold text-[var(--sarkari-navy)] text-hindi">
+          <div className="text-center mb-10 sm:mb-12 lg:mb-14">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--sarkari-navy)] text-hindi">
               लोग क्या कहते हैं
             </h2>
-            <p className="mt-3 text-muted-foreground">
+            <p className="mt-2 sm:mt-3 text-sm sm:text-base text-muted-foreground">
               Real stories from real users across India
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             {testimonials.map((t) => (
               <div
                 key={t.name}
-                className="testimonial-card rounded-2xl bg-card border border-border p-6 shadow-sm hover:shadow-lg transition-all duration-300"
+                className="testimonial-card rounded-2xl bg-card border border-border p-4 sm:p-6 shadow-sm hover:shadow-lg transition-all duration-300"
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="text-3xl">{t.avatar}</span>
+                  <span className="text-2xl sm:text-3xl">{t.avatar}</span>
                   <div>
-                    <p className="font-semibold text-sm text-hindi">
+                    <p className="font-semibold text-xs sm:text-sm text-hindi">
                       {t.name}
                     </p>
                     <p className="text-xs text-muted-foreground text-hindi">
@@ -310,12 +310,12 @@ export default function LandingPage() {
                     </p>
                   </div>
                 </div>
-                <p className="text-sm text-foreground/80 leading-relaxed text-hindi">
+                <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed text-hindi">
                   &ldquo;{t.quoteHi}&rdquo;
                 </p>
                 <div className="flex items-center gap-0.5 mt-3">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <span key={star} className="text-yellow-400 text-sm">
+                    <span key={star} className="text-yellow-400 text-xs sm:text-sm">
                       ★
                     </span>
                   ))}
@@ -327,33 +327,33 @@ export default function LandingPage() {
       </section>
 
       {/* ─── FOR WHOM ─── */}
-      <section ref={forWhomRef} className="py-20 bg-background">
+      <section ref={forWhomRef} className="py-12 sm:py-16 lg:py-20 bg-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold text-[var(--sarkari-navy)] text-hindi">
+          <div className="text-center mb-10 sm:mb-12 lg:mb-14">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--sarkari-navy)] text-hindi">
               किसके लिए है?
             </h2>
-            <p className="mt-3 text-muted-foreground">
+            <p className="mt-2 sm:mt-3 text-sm sm:text-base text-muted-foreground">
               Government schemes for every Indian citizen
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
             {forWhom.map((item) => (
               <div
                 key={item.titleEn}
-                className="whom-card group rounded-2xl border border-border bg-card p-5 text-center transition-all duration-300 hover:shadow-xl hover:border-[var(--sarkari-saffron)]/30 hover:-translate-y-2 cursor-pointer"
+                className="whom-card group rounded-2xl border border-border bg-card p-3 sm:p-5 text-center transition-all duration-300 hover:shadow-xl hover:border-[var(--sarkari-saffron)]/30 hover:-translate-y-2 cursor-pointer"
               >
-                <span className="text-4xl block mb-3 group-hover:scale-110 transition-transform">
+                <span className="text-3xl sm:text-4xl block mb-2 sm:mb-3 group-hover:scale-110 transition-transform">
                   {item.icon}
                 </span>
-                <h3 className="text-sm font-semibold text-[var(--sarkari-navy)] text-hindi">
+                <h3 className="text-xs sm:text-sm font-semibold text-[var(--sarkari-navy)] text-hindi">
                   {item.titleHi}
                 </h3>
                 <p className="text-[10px] text-muted-foreground mt-0.5">
                   {item.titleEn}
                 </p>
-                <p className="text-[11px] text-[var(--sarkari-saffron)] font-medium mt-2 text-hindi">
+                <p className="text-[10px] sm:text-[11px] text-[var(--sarkari-saffron)] font-medium mt-1 sm:mt-2 text-hindi">
                   {item.count}
                 </p>
               </div>
@@ -363,21 +363,21 @@ export default function LandingPage() {
       </section>
 
       {/* ─── CTA SECTION ─── */}
-      <section className="py-20 bg-saffron-gradient">
+      <section className="py-12 sm:py-16 lg:py-20 bg-saffron-gradient">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white text-hindi">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white text-hindi">
             अभी Register करें — बिलकुल FREE
           </h2>
-          <p className="mt-4 text-white/80 text-lg max-w-xl mx-auto">
+          <p className="mt-3 sm:mt-4 text-white/80 text-base sm:text-lg max-w-xl mx-auto">
             Join 50,000+ Indians who already found their government scheme benefits
           </p>
           <Link
             href="/register"
-            className="mt-8 inline-flex items-center gap-2 px-10 py-4 text-lg font-bold rounded-xl bg-white text-[var(--sarkari-saffron)] shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300"
+            className="mt-6 sm:mt-8 inline-flex items-center gap-2 px-6 sm:px-8 sm:px-10 py-3 sm:py-4 text-base sm:text-lg font-bold rounded-xl bg-white text-[var(--sarkari-saffron)] shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300"
           >
             <span className="text-hindi">मुफ्त में शुरू करें</span> →
           </Link>
-          <p className="mt-4 text-white/60 text-sm">
+          <p className="mt-3 sm:mt-4 text-white/60 text-xs sm:text-sm">
             No credit card required • 100% Free • Hindi support
           </p>
         </div>

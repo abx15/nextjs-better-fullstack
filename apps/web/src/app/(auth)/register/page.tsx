@@ -14,24 +14,26 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { LanguageToggle } from '@/components/ui/language-toggle'
+import { useLanguage } from '@/contexts/language-context'
 
 const schema = z.object({
-  name: z.string().min(2, 'नाम कम से कम 2 अक्षर होना चाहिए'),
-  phone: z.string().regex(/^[6-9]\d{9}$/, 'सही 10 अंक का मोबाइल नंबर डालें'),
-  email: z.string().email('सही ईमेल डालें').optional().or(z.literal('')),
+  name: z.string().min(2, 'auth.nameRequired'),
+  phone: z.string().regex(/^[6-9]\d{9}$/, 'auth.phoneInvalid'),
+  email: z.string().email('auth.emailInvalid').optional().or(z.literal('')),
   password: z.string()
-    .min(8, 'पासवर्ड कम से कम 8 अक्षर होना चाहिए')
-    .regex(/\d/, 'पासवर्ड में कम से कम एक नंबर होना चाहिए'),
+    .min(8, 'auth.passwordMinLength')
+    .regex(/\d/, 'auth.passwordNumberRequired'),
   confirmPassword: z.string(),
-  terms: z.boolean().refine(v => v, 'Terms से सहमत होना ज़रूरी है'),
+  terms: z.boolean().refine(v => v, 'auth.termsRequired'),
 }).refine(d => d.password === d.confirmPassword, {
-  message: 'पासवर्ड मेल नहीं खाता',
+  message: 'auth.passwordMismatch',
   path: ['confirmPassword'],
 })
 
 type FormData = z.infer<typeof schema>
 
 export default function RegisterPage() {
+  const { t } = useLanguage()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -80,9 +82,9 @@ export default function RegisterPage() {
 
   const getPasswordStrengthText = () => {
     switch (passwordStrength) {
-      case 'weak': return 'कमज़ोर'
-      case 'medium': return 'ठीक है'
-      case 'strong': return 'मज़बूत'
+      case 'weak': return t('auth.weak')
+      case 'medium': return t('auth.medium')
+      case 'strong': return t('auth.strong')
     }
   }
 
@@ -103,7 +105,7 @@ export default function RegisterPage() {
       const result = await response.json()
 
       if (!response.ok) {
-        toast.error(result.error || 'रजिस्टर में कुछ गलत हो गया')
+        toast.error(t(result.error) || t('auth.registerError'))
         return
       }
 
@@ -115,14 +117,14 @@ export default function RegisterPage() {
       })
 
       if (loginResult?.error) {
-        toast.success('खाता बन गया! अब लॉगिन करें')
+        toast.success(t('auth.registerSuccess'))
         router.push('/login')
       } else {
-        toast.success('खाता बन गया! 🎉')
-        router.push('/profile/setup')
+        toast.success(t('auth.registerSuccess'))
+        router.push('/dashboard/profile/setup')
       }
     } catch (error) {
-      toast.error('रजिस्टर में कुछ गलत हो गया')
+      toast.error(t('auth.genericError'))
     } finally {
       setIsLoading(false)
     }
@@ -133,60 +135,63 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
-      {/* Left Panel - Branding (Hidden on mobile) */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[#1a3a6b] text-white p-12 flex-col justify-between">
-        <div className="flex-1 flex flex-col justify-center">
-          <div className="text-center mb-12">
-            <div className="text-6xl mb-4">🏛️</div>
-            <h1 className="text-4xl font-bold mb-2">SarkariSaathi</h1>
-            <p className="text-xl opacity-90">सरकारी योजनाएं अब आसान</p>
+    <div className="min-h-screen bg-gray-50">
+      {/* Mobile Header - Hidden since we have navbar now */}
+      
+      <div className="flex flex-col lg:flex-row min-h-[calc(100vh-64px)]">
+        {/* Left Panel - Branding (Hidden on mobile) */}
+        <div className="hidden lg:flex lg:w-1/2 bg-[#1a3a6b] text-white p-12 flex-col justify-between">
+          <div className="flex-1 flex flex-col justify-center">
+            <div className="text-center mb-12">
+              <div className="text-6xl mb-4">🏛️</div>
+              <h1 className="text-4xl font-bold mb-2">SarkariSaathi</h1>
+              <p className="text-xl opacity-90">सरकारी योजनाएं अब आसान</p>
+            </div>
+            
+            <div className="space-y-6 max-w-md mx-auto">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                  <Check className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-lg">1,000+ सरकारी योजनाएं</span>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                  <Check className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-lg">AI से personalized matching</span>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                  <Check className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-lg">बिल्कुल मुफ़्त — हमेशा</span>
+              </div>
+            </div>
           </div>
           
-          <div className="space-y-6 max-w-md mx-auto">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-                <Check className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-lg">1,000+ सरकारी योजनाएं</span>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-                <Check className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-lg">AI से personalized matching</span>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-                <Check className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-lg">बिल्कुल मुफ़्त — हमेशा</span>
-            </div>
+          {/* India flag colors decoration at bottom */}
+          <div className="flex justify-center gap-2">
+            <div className="w-16 h-2 bg-orange-500 rounded"></div>
+            <div className="w-16 h-2 bg-white rounded"></div>
+            <div className="w-16 h-2 bg-green-500 rounded"></div>
           </div>
         </div>
-        
-        {/* India flag colors decoration at bottom */}
-        <div className="flex justify-center gap-2">
-          <div className="w-16 h-2 bg-orange-500 rounded"></div>
-          <div className="w-16 h-2 bg-white rounded"></div>
-          <div className="w-16 h-2 bg-green-500 rounded"></div>
-        </div>
-      </div>
 
-      {/* Right Panel - Form */}
-      <div className="flex-1 bg-white p-6 lg:p-12 flex items-center justify-center">
-        <div className="w-full max-w-md">
-          {/* Language Toggle */}
-          <div className="flex justify-end mb-6">
-            <LanguageToggle size="sm" variant="outline" />
-          </div>
+        {/* Right Panel - Form */}
+        <div className="flex-1 bg-white p-4 sm:p-6 lg:p-12 flex items-center justify-center">
+          <div className="w-full max-w-md">
+            {/* Language Toggle */}
+            <div className="flex justify-end mb-4 lg:mb-6">
+              <LanguageToggle size="sm" variant="outline" />
+            </div>
 
-          <div className="text-center mb-8">
-            <h1 className="text-3xl lg:text-4xl font-bold mb-2">नमस्ते 🙏</h1>
-            <p className="text-gray-600 text-lg">नया खाता बनाएं</p>
-          </div>
+            <div className="text-center mb-6 lg:mb-8">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{t('auth.registerTitle')}</h1>
+              <p className="text-gray-600 text-sm sm:text-base lg:text-lg">{t('auth.registerSubtitle')}</p>
+            </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Google Sign In Button */}
@@ -194,7 +199,7 @@ export default function RegisterPage() {
               type="button"
               variant="outline"
               onClick={handleGoogleSignIn}
-              className="w-full h-12 border-2 hover:bg-gray-50 flex items-center gap-3"
+              className="w-full h-11 sm:h-12 border-2 hover:bg-gray-50 flex items-center gap-3 text-sm sm:text-base"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -217,66 +222,67 @@ export default function RegisterPage() {
 
             {/* Name Field */}
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-base font-medium">पूरा नाम</Label>
+              <Label htmlFor="name" className="text-sm sm:text-base font-medium">{t('auth.name')}</Label>
               <div className="relative">
-                <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <User className="absolute left-3 top-3 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                 <Input
                   id="name"
-                  placeholder="जैसे: राम कुमार"
-                  className="pl-10 h-12"
+                  placeholder={t('auth.namePlaceholder')}
+                  className="pl-10 h-11 sm:h-12 text-sm sm:text-base"
                   {...register('name')}
                 />
               </div>
               {errors.name && (
-                <p className="text-red-500 text-sm">{errors.name.message}</p>
+                <p className="text-red-500 text-xs sm:text-sm">{t(errors.name.message as string)}</p>
               )}
             </div>
 
             {/* Phone Field */}
             <div className="space-y-2">
-              <Label htmlFor="phone" className="text-base font-medium">मोबाइल नंबर</Label>
+              <Label htmlFor="phone" className="text-sm sm:text-base font-medium">{t('auth.phone')}</Label>
               <div className="relative">
-                <Phone className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <Phone className="absolute left-3 top-3 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                 <Input
                   id="phone"
-                  placeholder="10 अंक का नंबर"
-                  className="pl-10 h-12"
+                  placeholder={t('auth.phonePlaceholder')}
+                  className="pl-10 h-11 sm:h-12 text-sm sm:text-base"
                   maxLength={10}
                   {...register('phone')}
                 />
               </div>
               {errors.phone && (
-                <p className="text-red-500 text-sm">{errors.phone.message}</p>
+                <p className="text-red-500 text-xs sm:text-sm">{t(errors.phone.message as string)}</p>
               )}
             </div>
 
             {/* Email Field */}
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-base font-medium">ईमेल (वैकल्पिक)</Label>
+              <Label htmlFor="email" className="text-sm sm:text-base font-medium">{t('auth.emailOptional')}</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <Mail className="absolute left-3 top-3 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder="aapka@email.com"
-                  className="pl-10 h-12"
+                  placeholder={t('auth.emailPlaceholder')}
+                  className="pl-10 h-11 sm:h-12 text-sm sm:text-base"
                   {...register('email')}
                 />
               </div>
               {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email.message}</p>
+                <p className="text-red-500 text-xs sm:text-sm">{t(errors.email.message as string)}</p>
               )}
             </div>
 
             {/* Password Field */}
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-base font-medium">पासवर्ड बनाएं</Label>
+              <Label htmlFor="password" className="text-sm sm:text-base font-medium">{t('auth.password')}</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <Lock className="absolute left-3 top-3 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  className="pl-10 pr-10 h-12"
+                  placeholder={t('auth.passwordPlaceholder')}
+                  className="pl-10 pr-10 h-11 sm:h-12 text-sm sm:text-base"
                   {...register('password', { onChange: handlePasswordChange })}
                 />
                 <button
@@ -284,7 +290,7 @@ export default function RegisterPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <Eye className="h-4 w-4 sm:h-5 sm:w-5" />}
                 </button>
               </div>
               
@@ -298,7 +304,7 @@ export default function RegisterPage() {
                         style={{ width: passwordStrength === 'weak' ? '33%' : passwordStrength === 'medium' ? '66%' : '100%' }}
                       />
                     </div>
-                    <span className={`text-sm font-medium ${
+                    <span className={`text-xs sm:text-sm font-medium ${
                       passwordStrength === 'weak' ? 'text-red-500' : 
                       passwordStrength === 'medium' ? 'text-yellow-500' : 'text-green-500'
                     }`}>
@@ -309,19 +315,20 @@ export default function RegisterPage() {
               )}
               
               {errors.password && (
-                <p className="text-red-500 text-sm">{errors.password.message}</p>
+                <p className="text-red-500 text-xs sm:text-sm">{t(errors.password.message as string)}</p>
               )}
             </div>
 
             {/* Confirm Password Field */}
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="text-base font-medium">पासवर्ड दोबारा डालें</Label>
+              <Label htmlFor="confirmPassword" className="text-sm sm:text-base font-medium">{t('auth.confirmPassword')}</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <Lock className="absolute left-3 top-3 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                 <Input
                   id="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
-                  className="pl-10 pr-10 h-12"
+                  placeholder={t('auth.passwordPlaceholder')}
+                  className="pl-10 pr-10 h-11 sm:h-12 text-sm sm:text-base"
                   {...register('confirmPassword')}
                 />
                 <button
@@ -329,11 +336,11 @@ export default function RegisterPage() {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                 >
-                  {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showConfirmPassword ? <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <Eye className="h-4 w-4 sm:h-5 sm:w-5" />}
                 </button>
               </div>
               {errors.confirmPassword && (
-                <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>
+                <p className="text-red-500 text-xs sm:text-sm">{t(errors.confirmPassword.message as string)}</p>
               )}
             </div>
 
@@ -345,35 +352,36 @@ export default function RegisterPage() {
                 className="mt-1"
               />
               <Label htmlFor="terms" className="text-sm text-gray-600 leading-relaxed">
-                मैं <span className="text-blue-600 hover:text-blue-800 cursor-pointer">Terms of Service</span> से सहमत हूं
+                {t('auth.termsAgreement')}
               </Label>
             </div>
             {errors.terms && (
-              <p className="text-red-500 text-sm">{errors.terms.message}</p>
+              <p className="text-red-500 text-sm">{t(errors.terms.message as string)}</p>
             )}
 
             {/* Submit Button */}
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-12 bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white font-medium text-base"
+              className="w-full h-11 sm:h-12 bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white font-medium text-sm sm:text-base"
             >
-              {isLoading ? 'खाता बन रहा है...' : 'खाता बनाएं'}
+              {isLoading ? t('auth.registering') : t('auth.registerButton')}
             </Button>
           </form>
 
           {/* Login Link */}
-          <div className="text-center mt-6">
-            <span className="text-gray-600">पहले से खाता है? </span>
+          <div className="text-center mt-4 lg:mt-6">
+            <span className="text-gray-600 text-sm sm:text-base">{t('auth.haveAccount')} </span>
             <Button
               type="button"
               variant="link"
-              className="text-[#FF6B00] hover:text-[#FF6B00]/80 p-0 font-medium"
+              className="text-[#FF6B00] hover:text-[#FF6B00]/80 p-0 font-medium text-sm sm:text-base"
               onClick={() => router.push('/login')}
             >
-              लॉगिन करें →
+              {t('auth.loginButton')} →
             </Button>
           </div>
+        </div>
         </div>
       </div>
     </div>

@@ -133,7 +133,7 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold mb-2">
-              {language === 'hi' ? 'नमस्ते, रमेश कुमार जी! 🙏' : 'Hello, Ramesh Kumar! 🙏'}
+              {t('dashboard.welcome', { name: 'रमेश कुमार' })}
             </h2>
             <p className="text-white/80">{formatDate()}</p>
           </div>
@@ -165,7 +165,7 @@ export default function DashboardPage() {
                 <span className="text-white font-bold text-lg">80%</span>
               </div>
             </div>
-            <p className="text-sm text-white/80 mt-2">{t('profile')}</p>
+            <p className="text-sm text-white/80 mt-2">{t('sidebar.profile')}</p>
           </div>
         </div>
       </Card>
@@ -174,7 +174,7 @@ export default function DashboardPage() {
       <Card className="p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold text-[#1a3a6b]">
-            🎉 {language === 'hi' ? `आपके लिए ${matchedSchemes.length} योजनाएं मिली हैं!` : `Found ${matchedSchemes.length} schemes for you!`}
+            🎉 {t('dashboard.matchedSchemes', { count: matchedSchemes.length })}
           </h3>
         </div>
 
@@ -202,11 +202,11 @@ export default function DashboardPage() {
             </div>
             <div className="flex gap-3">
               <Link href="/dashboard/my-schemes">
-                <Button variant="outline">{t('viewAllSchemes')} →</Button>
+                <Button variant="outline">{t('dashboard.viewAllSchemes')} →</Button>
               </Link>
               <Link href="/dashboard/finder">
                 <Button className="bg-[#FF6B00] hover:bg-[#FF6B00]/90">
-                  🤖 {language === 'hi' ? 'नई खोज करें' : 'New Search'}
+                  🤖 {t('dashboard.newSearch')}
                 </Button>
               </Link>
             </div>
@@ -215,11 +215,11 @@ export default function DashboardPage() {
           <div className="text-center py-8">
             <div className="text-6xl mb-4">🔍</div>
             <h4 className="text-lg font-medium text-gray-600 mb-2">
-              {language === 'hi' ? 'अभी AI से अपनी योजनाएं खोजें' : 'Find your schemes with AI now'}
+              {t('dashboard.noSchemesFound')}
             </h4>
               <Link href="/dashboard/finder">
                 <Button className="bg-[#FF6B00] hover:bg-[#FF6B00]/90">
-                  {language === 'hi' ? 'योजनाएं खोजें' : 'Find Schemes'} →
+                  {t('dashboard.findSchemes')} →
                 </Button>
               </Link>
           </div>
@@ -231,22 +231,22 @@ export default function DashboardPage() {
         <StatsCard
           icon="📊"
           value={stats.total}
-          label={language === 'hi' ? 'कुल आवेदन' : 'Total Applications'}
+          label={t('dashboard.stats.total')}
         />
         <StatsCard
           icon="✅"
           value={stats.approved}
-          label={language === 'hi' ? 'स्वीकृत' : 'Approved'}
+          label={t('dashboard.stats.approved')}
         />
         <StatsCard
           icon="⏳"
           value={stats.pending}
-          label={language === 'hi' ? 'विचाराधीन' : 'Pending'}
+          label={t('dashboard.stats.pending')}
         />
         <StatsCard
           icon="💾"
           value={stats.saved}
-          label={language === 'hi' ? 'सहेजा गया' : 'Saved'}
+          label={t('dashboard.stats.saved')}
         />
       </div>
 
@@ -282,7 +282,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <Badge variant={daysUntilDue < 7 ? "destructive" : "secondary"}>
-                      {daysUntilDue} {language === 'hi' ? 'दिन' : 'days'}
+                      {daysUntilDue} {t('dashboard.days')}
                     </Badge>
                   </div>
                 </div>
@@ -299,10 +299,10 @@ export default function DashboardPage() {
         {/* 5. AI QUICK ACCESS */}
         <Card className="p-6 border-l-4 border-l-[#1a3a6b]">
           <h3 className="text-xl font-bold text-[#1a3a6b] mb-2">
-            💬 {t('aiQuickHelp')}
+            💬 {t('dashboard.aiQuickHelp')}
           </h3>
           <p className="text-gray-600 mb-4">
-            {language === 'hi' ? 'कोई भी सरकारी योजना का सवाल हिंदी में पूछें' : 'Ask any government scheme question in Hindi'}
+            {t('dashboard.askAIDesc')}
           </p>
           
           <div className="space-y-2 mb-4">
@@ -320,7 +320,7 @@ export default function DashboardPage() {
 
           <Link href="/dashboard/chat">
             <Button className="w-full bg-[#FF6B00] hover:bg-[#FF6B00]/90">
-              {language === 'hi' ? 'AI साथी खोलें' : 'Open AI Assistant'} →
+              {t('dashboard.openAIAssistant')} →
             </Button>
           </Link>
         </Card>

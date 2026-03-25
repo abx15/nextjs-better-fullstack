@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from './button'
 import { useUserStore } from '@/store/user-store'
 import { Globe } from 'lucide-react'
@@ -16,6 +16,11 @@ export function LanguageToggle({
 }: LanguageToggleProps) {
   const { language, setLanguage } = useUserStore()
   const [isAnimating, setIsAnimating] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  
+  useEffect(() => {
+    setMounted(true)
+  }, [])
   
   const handleLanguageChange = () => {
     setIsAnimating(true)
@@ -23,7 +28,9 @@ export function LanguageToggle({
     setLanguage(newLanguage)
     
     // Save to localStorage
-    localStorage.setItem('sarkari-language', newLanguage)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('sarkari-language', newLanguage)
+    }
     
     // Reset animation
     setTimeout(() => setIsAnimating(false), 300)
@@ -34,6 +41,32 @@ export function LanguageToggle({
     sm: 'px-3 py-1.5 text-xs',
     default: 'px-4 py-2 text-sm',
     lg: 'px-6 py-3 text-base'
+  }
+  
+  if (!mounted) {
+    return (
+      <Button
+        variant={variant}
+        size={size}
+        className={`
+          relative overflow-hidden transition-all duration-300
+          ${sizeClasses[size]}
+          ${variant === 'default' ? 'bg-primary hover:bg-primary/90 text-primary-foreground' : ''}
+          ${variant === 'outline' ? 'border-2 hover:bg-primary hover:text-primary-foreground' : ''}
+          ${variant === 'ghost' ? 'hover:bg-primary/10' : ''}
+        `}
+        suppressHydrationWarning={true}
+      >
+        <div className="relative flex items-center gap-2">
+          {showIcon && <Globe className="w-4 h-4" />}
+          <span className="font-medium">HI</span>
+          <div className="flex gap-1">
+            <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
+            <div className="w-1.5 h-1.5 rounded-full bg-transparent" />
+          </div>
+        </div>
+      </Button>
+    )
   }
   
   return (
@@ -49,6 +82,7 @@ export function LanguageToggle({
         ${variant === 'outline' ? 'border-2 hover:bg-primary hover:text-primary-foreground' : ''}
         ${variant === 'ghost' ? 'hover:bg-primary/10' : ''}
       `}
+      suppressHydrationWarning={true}
     >
       {/* Animated background effect */}
       <div className={`
@@ -86,13 +120,13 @@ export function LanguageToggle({
       </div>
       
       {/* Hover tooltip */}
-      <div className="
+      <div className={`
         absolute -bottom-8 left-1/2 transform -translate-x-1/2
         bg-gray-900 text-white text-xs px-2 py-1 rounded
         opacity-0 hover:opacity-100 transition-opacity duration-200
         pointer-events-none whitespace-nowrap
         z-50
-      ">
+      `}>
         {language === 'hi' ? 'Switch to English' : 'हिंदी में बदलें'}
       </div>
     </Button>

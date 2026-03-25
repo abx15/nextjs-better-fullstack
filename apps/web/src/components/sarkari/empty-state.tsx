@@ -1,6 +1,8 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/language-context";
 
 interface EmptyStateProps {
   icon?: string;
@@ -23,6 +25,18 @@ export default function EmptyState({
   onAction,
   className,
 }: EmptyStateProps) {
+  const { language } = useLanguage();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+  
+  const title = language === 'hi' ? titleHindi : (titleEnglish || titleHindi);
+  const description = language === 'hi' ? descriptionHindi : (descriptionEnglish || descriptionHindi);
+
   return (
     <div
       className={cn(
@@ -32,25 +46,17 @@ export default function EmptyState({
     >
       <span className="text-5xl mb-4">{icon}</span>
       <h3 className="text-lg font-semibold text-foreground text-hindi">
-        {titleHindi}
+        {title}
       </h3>
-      {titleEnglish && (
-        <p className="text-sm text-muted-foreground mt-1">{titleEnglish}</p>
-      )}
-      {descriptionHindi && (
-        <p className="text-sm text-muted-foreground mt-2 max-w-sm text-hindi">
-          {descriptionHindi}
-        </p>
-      )}
-      {descriptionEnglish && (
-        <p className="text-xs text-muted-foreground mt-1 max-w-sm">
-          {descriptionEnglish}
+      {description && (
+        <p className="text-sm text-muted-foreground mt-2 max-w-sm text-hindi leading-relaxed">
+          {description}
         </p>
       )}
       {actionLabel && onAction && (
         <button
           onClick={onAction}
-          className="mt-4 px-5 py-2 text-sm font-medium rounded-lg bg-[var(--sarkari-saffron)] text-white hover:bg-[var(--sarkari-saffron-dark)] transition-colors"
+          className="mt-6 px-5 py-2 text-sm font-medium rounded-lg bg-[var(--sarkari-saffron)] text-white hover:bg-[var(--sarkari-saffron-dark)] transition-colors shadow-sm active:scale-95"
         >
           {actionLabel}
         </button>

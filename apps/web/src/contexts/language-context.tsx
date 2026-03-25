@@ -8,7 +8,7 @@ type Language = "hi" | "en";
 interface LanguageContextType {
   language: Language;
   setLanguage: (language: Language) => void;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, string | number>) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -31,7 +31,7 @@ import { translations } from "@/lib/i18n";
 export function LanguageProvider({ children }: LanguageProviderProps) {
   const { language, setLanguage } = useUserStore();
 
-  const t = (key: string): string => {
+  const t = (key: string, params?: Record<string, string | number>): string => {
     const keys = key.split('.');
     let value: any = translations[language];
     
@@ -39,7 +39,15 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
       value = value?.[k];
     }
     
-    return typeof value === 'string' ? value : key;
+    if (typeof value !== 'string') return key;
+
+    if (params) {
+      Object.entries(params).forEach(([k, v]) => {
+        value = (value as string).replace(`{${k}}`, String(v));
+      });
+    }
+    
+    return value;
   };
 
   const value = {

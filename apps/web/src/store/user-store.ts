@@ -44,6 +44,9 @@ export const useUserStore = create<UserState>()(
       setLanguage: (language) => set({ language }),
       clearUser: () => set({ user: null, profile: null }),
     }),
-    { name: 'sarkari-user-store' }
+    { 
+      name: 'sarkari-user-store',
+      skipHydration: true
+    }
   )
 )

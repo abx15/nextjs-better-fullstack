@@ -187,4 +187,31 @@
     background-color: rgba(26, 58, 107, 0.72);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
+  
+  /* Cursor pointer utilities */
+  .cursor-pointer {
+    cursor: pointer;
+  }
+  
+  /* All links should have pointer cursor */
+  a {
+    cursor: pointer;
+  }
+  
+  /* All buttons should have pointer cursor */
+  button {
+    cursor: pointer;
+  }
+  
+  /* Interactive elements */
+  [role="button"],
+  [role="link"],
+  [role="menuitem"],
+  [role="menuitemradio"],
+  [role="menuitemcheckbox"],
+  [role="option"],
+  [role="tab"],
+  [role="treeitem"] {
+    cursor: pointer;
+  }
 }

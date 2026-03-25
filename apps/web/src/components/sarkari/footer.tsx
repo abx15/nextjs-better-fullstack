@@ -1,21 +1,24 @@
 import Link from "next/link";
+import { useLanguage } from "@/contexts/language-context";
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   const links = {
     company: [
-      { href: "/about", label: "हमारे बारे में" },
-      { href: "/contact", label: "संपर्क करें" },
-      { href: "/faq", label: "अक्सर पूछे जाने वाले सवाल" },
+      { href: "/about", label: t('footer.about') },
+      { href: "/contact", label: t('footer.contact') },
+      { href: "/faq", label: t('footer.faq') },
     ],
     resources: [
-      { href: "/schemes", label: "सभी योजनाएं" },
-      { href: "/blog", label: "ब्लॉग" },
-      { href: "/help", label: "सहायता केंद्र" },
+      { href: "/schemes", label: t('footer.allSchemes') },
+      { href: "/blog", label: t('footer.blog') },
+      { href: "/help", label: t('footer.helpCenter') },
     ],
     legal: [
-      { href: "/privacy", label: "गोपनीयता नीति" },
-      { href: "/terms", label: "नियम और शर्तें" },
-      { href: "/disclaimer", label: "अस्वीकरण" },
+      { href: "/privacy", label: t('footer.privacyPolicy') },
+      { href: "/terms", label: t('footer.terms') },
+      { href: "/disclaimer", label: t('footer.disclaimer') },
     ],
   };
 
@@ -26,12 +29,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="md:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4">
+            <Link href={"/" as any} className="flex items-center gap-2 mb-4">
               <span className="text-2xl">🏛️</span>
               <span className="text-xl font-bold">SarkariSaathi</span>
             </Link>
             <p className="text-sm text-white/70 text-hindi leading-relaxed">
-              हर Indian की हक की scheme — AI से, free में। सरकारी योजनाओं को खोजें, समझें और आवेदन करें।
+              {t('footer.tagline')}
             </p>
             <div className="flex items-center gap-3 mt-4">
               <span className="text-2xl">🇮🇳</span>
@@ -42,7 +45,7 @@ export default function Footer() {
           {/* Company Links */}
           <div>
             <h4 className="text-sm font-semibold mb-4 text-[var(--sarkari-saffron-light)] text-hindi">
-              कंपनी
+              {t('footer.company')}
             </h4>
             <ul className="space-y-2.5">
               {links.company.map((link) => (
@@ -61,7 +64,7 @@ export default function Footer() {
           {/* Resources Links */}
           <div>
             <h4 className="text-sm font-semibold mb-4 text-[var(--sarkari-saffron-light)] text-hindi">
-              संसाधन
+              {t('footer.resources')}
             </h4>
             <ul className="space-y-2.5">
               {links.resources.map((link) => (
@@ -80,7 +83,7 @@ export default function Footer() {
           {/* Legal Links */}
           <div>
             <h4 className="text-sm font-semibold mb-4 text-[var(--sarkari-saffron-light)] text-hindi">
-              कानूनी
+              {t('footer.legal')}
             </h4>
             <ul className="space-y-2.5">
               {links.legal.map((link) => (
@@ -103,10 +106,10 @@ export default function Footer() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
             <p className="text-sm text-white/50">
-              © {new Date().getFullYear()} SarkariSaathi. All rights reserved.
+              © {new Date().getFullYear()} SarkariSaathi. {t('footer.rights')}
             </p>
             <p className="text-sm text-white/50">
-              Made with ❤️ for Bharat 🇮🇳
+              {t('footer.madeWith')}
             </p>
           </div>
         </div>
