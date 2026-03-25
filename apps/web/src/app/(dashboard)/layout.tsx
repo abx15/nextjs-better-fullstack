@@ -48,7 +48,7 @@ export default function DashboardLayout({
     setIsLoggingOut(true);
     try {
       await logout();
-      router.push("/login");
+      router.push("/");
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
