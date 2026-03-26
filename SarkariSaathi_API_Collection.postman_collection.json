@@ -1,0 +1,488 @@
+{
+	"info": {
+		"_postman_id": "sarkari-saathi-apis",
+		"name": "SarkariSaathi APIs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "sarkari-saathi-team",
+		"description": "Complete API collection for SarkariSaathi application testing"
+	},
+	"item": [
+		{
+			"name": "🔐 Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test if registration was successful",
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.globals.set(\"registeredUserId\", response.userId);",
+									"    pm.test(\"User registered successfully\", () => {",
+									"        pm.expect(response.success).to.be.true;",
+									"        pm.expect(response.userId).to.be.a('string');",
+									"    });",
+									"} else {",
+									"    pm.test(\"Registration failed\", () => {",
+									"        pm.expect(pm.response.code).to.be.oneOf([400, 422]);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"टेस्ट यूजर\",\n  \"phone\": \"9876543299\",\n  \"email\": \"testuser{{$randomInt}}@example.com\",\n  \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/register",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Auth Providers (CSRF Token)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Extract CSRF token from response",
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    const csrfToken = response.csrfToken;",
+									"    if (csrfToken) {",
+									"        pm.globals.set(\"csrfToken\", csrfToken);",
+									"        pm.test(\"CSRF token extracted\", () => {",
+									"            pm.expect(csrfToken).to.be.a('string');",
+									"        });",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/auth/providers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"providers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if login was successful",
+									"if (pm.response.code === 302) {",
+									"    pm.test(\"Login successful - redirect\", () => {",
+									"        pm.expect(pm.response.code).to.equal(302);",
+									"    });",
+									"    ",
+									"    // Extract session cookies",
+									"    const cookies = pm.response.headers.get('set-cookie');",
+									"    if (cookies) {",
+									"        const sessionCookie = cookies.split(';')[0];",
+									"        pm.globals.set(\"sessionCookie\", sessionCookie);",
+									"    }",
+									"} else {",
+									"    pm.test(\"Login failed\", () => {",
+									"        pm.expect(pm.response.code).to.be.oneOf([400, 401]);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"testuser123@example.com\",\n  \"password\": \"password123\",\n  \"csrfToken\": \"{{csrfToken}}\",\n  \"callbackUrl\": \"http://localhost:3000/dashboard\",\n  \"json\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/callback/credentials",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"callback",
+								"credentials"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Session Info",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Validate session response",
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.test(\"Session valid\", () => {",
+									"        pm.expect(response.user).to.exist;",
+									"        pm.expect(response.user.id).to.be.a('string');",
+									"        pm.expect(response.user.email).to.be.a('string');",
+									"    });",
+									"} else {",
+									"    pm.test(\"No active session\", () => {",
+									"        pm.expect(pm.response.code).to.equal(200);",
+									"        pm.expect(pm.response.json()).to.eql({});",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/auth/session",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"session"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check logout success",
+									"if (pm.response.code === 302) {",
+									"    pm.test(\"Logout successful\", () => {",
+									"        pm.expect(pm.response.code).to.equal(302);",
+									"    });",
+									"    ",
+									"    // Clear session variables",
+									"    pm.globals.unset(\"sessionCookie\");",
+									"} else {",
+									"    pm.test(\"Logout failed\", () => {",
+									"        pm.expect(pm.response.code).to.be.oneOf([400, 401]);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"csrfToken\": \"{{csrfToken}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/signout",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"signout"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication related APIs"
+		},
+		{
+			"name": "📊 Dashboard",
+			"item": [
+				{
+					"name": "Get Dashboard Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Validate dashboard response",
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.test(\"Dashboard data loaded\", () => {",
+									"        pm.expect(response).to.have.property('stats');",
+									"        pm.expect(response).to.have.property('topSchemes');",
+									"        pm.expect(response).to.have.property('reminders');",
+									"        pm.expect(response).to.have.property('recentActivity');",
+									"        pm.expect(response.stats).to.have.property('total');",
+									"    });",
+									"} else {",
+									"    pm.test(\"Dashboard access denied\", () => {",
+									"        pm.expect(pm.response.code).to.be.oneOf([200, 401]);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/dashboard?lang=hi",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"dashboard"
+							],
+							"query": [
+								{
+									"key": "lang",
+									"value": "hi",
+									"description": "Language preference (hi/en)"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Dashboard and user data APIs"
+		},
+		{
+			"name": "🎯 Schemes",
+			"item": [
+				{
+					"name": "Match Schemes for User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Validate scheme matching",
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.test(\"Scheme matching successful\", () => {",
+									"        pm.expect(response).to.have.property('schemes');",
+									"        pm.expect(response.schemes).to.be.an('array');",
+									"        if (response.schemes.length > 0) {",
+									"            pm.expect(response.schemes[0]).to.have.property('matchPercent');",
+									"            pm.expect(response.schemes[0]).to.have.property('slug');",
+									"        }",
+									"    });",
+									"} else {",
+									"    pm.test(\"Scheme matching failed\", () => {",
+									"        pm.expect(pm.response.code).to.be.oneOf([200, 401]);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/schemes/match",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"schemes",
+								"match"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Schemes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Validate schemes list",
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.test(\"Schemes list loaded\", () => {",
+									"        pm.expect(response).to.have.property('schemes');",
+									"        pm.expect(response).to.have.property('total');",
+									"        pm.expect(response.schemes).to.be.an('array');",
+									"        pm.expect(response.total).to.be.a('number');",
+									"    });",
+									"} else {",
+									"    pm.test(\"Schemes list failed\", () => {",
+									"        pm.expect(pm.response.code).to.be.oneOf([200, 400]);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/schemes?category=agriculture&limit=10",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"schemes"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "agriculture",
+									"description": "Filter by category"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Number of results"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Government schemes related APIs"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global pre-request script",
+					"console.log('Running SarkariSaathi API test...');"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global test script",
+					"console.log('Test completed for: ' + pm.info.requestName);"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:3000/api",
+			"type": "string"
+		},
+		{
+			"key": "csrfToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "sessionCookie",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "registeredUserId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
