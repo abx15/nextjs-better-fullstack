@@ -9,7 +9,7 @@ import Credentials from 'next-auth/providers/credentials'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
-  // adapter: PrismaAdapter(prisma), // Temporarily disabled
+  // adapter: PrismaAdapter(prisma), // Temporarily disabled - using JWT strategy
   session: { strategy: 'jwt' },
   providers: [
     ...authConfig.providers.filter((p) => (p as any).id !== 'credentials'),

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from './auth'
+import { getServerSession } from './server-auth'
 
 export type UserRole = 'USER' | 'OPERATOR' | 'ADMIN' | 'SUPER_ADMIN'
 
@@ -36,7 +36,7 @@ export function hasAnyRole(userRole: UserRole, allowedRoles: UserRole[]): boolea
 }
 
 export async function requireAuth(request: NextRequest): Promise<AuthenticatedUser> {
-  const session = await auth()
+  const session = await getServerSession()
   
   if (!session?.user) {
     throw new RoleAccessError('Authentication required')

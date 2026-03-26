@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import LanguageToggle from "@/components/sarkari/language-toggle";
 import ReminderBell from "@/components/sarkari/reminder-bell";
 import { useLanguage } from "@/contexts/language-context";
 import { logout } from "@/actions/auth";
+import { getRoleRedirectPath } from "@/lib/rbac";
+import type { UserRole } from "@/lib/rbac";
 
 const sidebarItems = [
   { href: "/dashboard", icon: "🏠", labelKey: "dashboard" },
@@ -41,6 +44,25 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const router = useRouter();
   const { t } = useLanguage();
+  const { data: session, status } = useSession();
+
+  // Authentication check
+  useEffect(() => {
+    if (status === 'loading') return; // Still loading
+    
+    if (!session) {
+      router.push('/login');
+      return;
+    }
+
+    // Check if user has correct role for dashboard
+    const userRole = session.user?.role as UserRole || 'USER';
+    if (!['USER', 'OPERATOR', 'ADMIN', 'SUPER_ADMIN'].includes(userRole)) {
+      const redirectPath = getRoleRedirectPath(userRole);
+      window.location.href = redirectPath;
+      return;
+    }
+  }, [session, status, router]);
 
   const handleLogout = async () => {
     if (isLoggingOut) return;
@@ -60,12 +82,21 @@ export default function DashboardLayout({
     setMounted(true);
   }, []);
 
-  if (!mounted) {
+  // Show loading while checking authentication
+  if (status === 'loading' || !mounted) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sarkari-navy"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF6B00] mx-auto mb-4"></div>
+          <p className="text-gray-600">{t('common.loading')}</p>
+        </div>
       </div>
     );
+  }
+
+  // Don't render if not authenticated
+  if (!session) {
+    return null;
   }
 
   return (

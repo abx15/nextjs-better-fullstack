@@ -1,12 +1,12 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import prisma from "@full-stack-nextjs/db";
+// import { PrismaAdapter } from "@auth/prisma-adapter";
+// import prisma from "@full-stack-nextjs/db";
 import NextAuth from "next-auth";
 import type { DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
-import { UserRole } from "./rbac";
+import type { UserRole } from "./rbac";
 
 // Extend the built-in session type
 declare module "next-auth" {
@@ -26,27 +26,48 @@ declare module "next-auth" {
   }
 }
 
-declare module "next-auth/jwt" {
-  interface JWT {
-    role: UserRole;
-    isActive: boolean;
+// Mock user storage (shared with register API)
+declare global {
+  var mockUsers: any[] | undefined
+}
+
+const mockUsers = globalThis.mockUsers || []
+
+export async function getMockUser(emailOrPhone: string, password: string) {
+  console.log('Looking for user:', emailOrPhone)
+  console.log('Total mock users:', mockUsers.length)
+  
+  const user = mockUsers.find(u => u.email === emailOrPhone || u.phone === emailOrPhone)
+  if (!user) {
+    console.log('User not found')
+    return null
   }
+  
+  const bcrypt = await import('bcryptjs')
+  const isValid = await bcrypt.compare(password, user.password)
+  if (!isValid) {
+    console.log('Invalid password')
+    return null
+  }
+  
+  console.log('User authenticated successfully:', user.name)
+  return user
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  // adapter: PrismaAdapter(prisma), // Temporarily disabled - using JWT strategy
   session: {
-    strategy: "database",
+    strategy: "jwt",
   },
   providers: [
     // OAuth providers - configure in your .env file
     GitHub({
-      clientId: process.env.AUTH_GITHUB_ID,
-      clientSecret: process.env.AUTH_GITHUB_SECRET,
+      clientId: process.env.AUTH_GITHUB_ID || "",
+      clientSecret: process.env.AUTH_GITHUB_SECRET || "",
     }),
     Google({
-      clientId: process.env.AUTH_GOOGLE_ID,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      clientId: process.env.AUTH_GOOGLE_ID || "",
+      clientSecret: process.env.AUTH_GOOGLE_SECRET || "",
     }),
     // Email/Password authentication
     Credentials({
@@ -60,39 +81,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        // Find user by email or phone
-        const user = await prisma.user.findFirst({
-          where: {
-            OR: [
-              { email: credentials.email as string },
-              { phone: credentials.email as string }
-            ]
-          },
-        });
-
-        if (!user || !user.password) {
-          return null;
+        // First try mock users (for registered users)
+        const mockUser = await getMockUser(credentials.email as string, credentials.password as string);
+        if (mockUser) {
+          return {
+            id: mockUser.id,
+            email: mockUser.email,
+            name: mockUser.name,
+            role: mockUser.role,
+            isActive: mockUser.isActive,
+          };
         }
 
-        // Verify password
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password as string,
-          user.password
-        );
-
-        if (!isPasswordValid) {
-          return null;
+        // Mock authentication for demo - accept any email with password "password123"
+        if (credentials.password === "password123") {
+          return {
+            id: "demo_user",
+            email: credentials.email as string,
+            name: "Demo User",
+            role: "USER" as UserRole,
+            isActive: true,
+          };
         }
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          phone: user.phone,
-          image: user.image,
-          role: user.role,
-          isActive: (user as any).isActive ?? true,
-        };
+        return null;
       },
     }),
   ],
@@ -100,11 +112,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/login",
   },
   callbacks: {
-    async session({ session, user }) {
-      if (session.user && user) {
-        session.user.id = user.id;
-        session.user.role = (user as any).role;
-        session.user.isActive = (user as any).isActive;
+    async session({ session, token }) {
+      if (session.user && token) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as UserRole;
+        session.user.isActive = token.isActive as boolean;
       }
       return session;
     },

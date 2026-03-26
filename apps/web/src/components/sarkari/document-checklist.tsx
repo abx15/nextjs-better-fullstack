@@ -37,7 +37,7 @@ export default function DocumentChecklist({
       <div className="space-y-2">
         {documents.map((doc, index) => (
           <div
-            key={index}
+            key={doc.name || index}
             className={cn(
               "flex items-start gap-3 p-3 rounded-lg border transition-colors",
               doc.hasDocument

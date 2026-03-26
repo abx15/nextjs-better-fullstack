@@ -14,6 +14,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { LanguageToggle } from '@/components/ui/language-toggle'
 import { useLanguage } from '@/contexts/language-context'
+import { getRoleRedirectPath } from '@/lib/rbac'
+import { getTestUser, getAllTestUsers } from '@/lib/test-users'
+import type { UserRole } from '@/lib/rbac'
 
 const schema = z.object({
   email: z.string().email('auth.emailInvalid'),
@@ -24,16 +27,11 @@ type FormData = z.infer<typeof schema>
 
 export default function LoginPage() {
   const { t } = useLanguage()
-  const { data: session, update } = useSession()
+  const { data: session, status } = useSession()
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [mounted, setMounted] = useState(false)
   const router = useRouter()
-
-  // Fix hydration
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   const {
     register,
@@ -42,6 +40,35 @@ export default function LoginPage() {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
+
+  // Fix hydration
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Redirect if already logged in (only after session is loaded)
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user) {
+      const userRole = session.user.role as UserRole || 'USER'
+      const redirectPath = getRoleRedirectPath(userRole)
+      // Prevent multiple redirects
+      if (typeof window !== 'undefined' && !window.location.href.includes(redirectPath)) {
+        window.location.href = redirectPath
+      }
+    }
+  }, [session, status])
+
+  // Show loading while session is loading
+  if (status === 'loading' || !mounted) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF6B00] mx-auto mb-4"></div>
+          <p className="text-gray-600">{t('common.loading')}</p>
+        </div>
+      </div>
+    )
+  }
 
   const onSubmit = async (data: FormData) => {
     setIsLoading(true)
@@ -69,6 +96,20 @@ export default function LoginPage() {
 
   const handleGoogleSignIn = () => {
     signIn('google', { callbackUrl: '/dashboard' })
+  }
+
+  const fillTestUser = (userIndex: number) => {
+    const testUser = getTestUser(userIndex)
+    const form = document.querySelector('form') as HTMLFormElement
+    if (form) {
+      const emailInput = form.querySelector('input[name="email"]') as HTMLInputElement
+      const passwordInput = form.querySelector('input[name="password"]') as HTMLInputElement
+      
+      if (emailInput) emailInput.value = testUser.email
+      if (passwordInput) passwordInput.value = testUser.password
+      
+      toast.success(`Test user ${testUser.name} filled!`)
+    }
   }
 
   return (
@@ -241,10 +282,31 @@ export default function LoginPage() {
                 variant="link"
                 className="text-[#FF6B00] hover:text-[#FF6B00]/80 p-0 font-medium text-sm sm:text-base"
                 onClick={() => router.push('/register')}
-                suppressHydrationWarning
               >
                 {t('navbar.register')} →
               </Button>
+            </div>
+
+            {/* Test Users Section */}
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">🧪 Quick Test Users (Demo)</h3>
+              <div className="space-y-2">
+                {getAllTestUsers().map((user, index) => (
+                  <Button
+                    key={index}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fillTestUser(index)}
+                    className="w-full justify-start text-xs h-8"
+                  >
+                    {user.name} ({user.email})
+                  </Button>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                Password: <code>password123</code>
+              </p>
             </div>
           </div>
         </div>

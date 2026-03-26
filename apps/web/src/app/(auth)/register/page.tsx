@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { LanguageToggle } from '@/components/ui/language-toggle'
 import { useLanguage } from '@/contexts/language-context'
+import { getTestUser, getAllTestUsers } from '@/lib/test-users'
 
 const schema = z.object({
   name: z.string().min(2, 'auth.nameRequired'),
@@ -132,6 +133,28 @@ export default function RegisterPage() {
 
   const handleGoogleSignIn = () => {
     signIn('google', { callbackUrl: '/profile/setup' })
+  }
+
+  const fillTestUser = (userIndex: number) => {
+    const testUser = getTestUser(userIndex)
+    const form = document.querySelector('form') as HTMLFormElement
+    if (form) {
+      const nameInput = form.querySelector('input[name="name"]') as HTMLInputElement
+      const phoneInput = form.querySelector('input[name="phone"]') as HTMLInputElement
+      const emailInput = form.querySelector('input[name="email"]') as HTMLInputElement
+      const passwordInput = form.querySelector('input[name="password"]') as HTMLInputElement
+      const confirmPasswordInput = form.querySelector('input[name="confirmPassword"]') as HTMLInputElement
+      const termsCheckbox = form.querySelector('input[name="terms"]') as HTMLInputElement
+      
+      if (nameInput) nameInput.value = testUser.name
+      if (phoneInput) phoneInput.value = testUser.phone
+      if (emailInput) emailInput.value = testUser.email
+      if (passwordInput) passwordInput.value = testUser.password
+      if (confirmPasswordInput) confirmPasswordInput.value = testUser.password
+      if (termsCheckbox) termsCheckbox.checked = true
+      
+      toast.success(`Test user ${testUser.name} filled!`)
+    }
   }
 
   return (
@@ -380,6 +403,28 @@ export default function RegisterPage() {
             >
               {t('auth.loginButton')} →
             </Button>
+          </div>
+
+          {/* Test Users Section */}
+          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">🧪 Quick Test Users (Demo)</h3>
+            <div className="space-y-2">
+              {getAllTestUsers().map((user, index) => (
+                <Button
+                  key={index}
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fillTestUser(index)}
+                  className="w-full justify-start text-xs h-8"
+                >
+                  {user.name} ({user.phone})
+                </Button>
+              ))}
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              Password: <code>password123</code>
+            </p>
           </div>
         </div>
         </div>

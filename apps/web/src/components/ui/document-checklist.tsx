@@ -112,7 +112,7 @@ export function DocumentChecklist({
           const isRequired = doc.required
           
           return (
-            <div key={index} className="border rounded-lg p-3 space-y-2">
+            <div key={doc.name || index} className="border rounded-lg p-3 space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   {hasDocument ? (

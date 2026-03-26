@@ -31,16 +31,33 @@ export default auth((req) => {
   const userRole = req.auth?.user?.role as UserRole || 'USER'
   const isActive = req.auth?.user?.isActive ?? true
 
-  // Allow public routes
+  // Debug logging (remove in production)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Middleware Debug:', {
+      pathname,
+      isLoggedIn,
+      userRole,
+      isActive,
+      url: req.url
+    })
+  }
+
+  // Allow public routes - don't redirect from login page
   const isPublic = PUBLIC_ROUTES.includes(pathname) || 
     PUBLIC_PREFIXES.some(p => pathname.startsWith(p))
 
   if (isPublic) {
-    // Only redirect from auth pages, not from home page
-    if (isLoggedIn && (pathname === '/login' || pathname === '/register')) {
+    // For login page, don't redirect even if logged in - let the page handle it
+    if (pathname === '/login') {
+      return NextResponse.next()
+    }
+    
+    // For register page, redirect if logged in
+    if (isLoggedIn && pathname === '/register') {
       const redirectPath = getRoleRedirectPath(userRole)
       return NextResponse.redirect(new URL(redirectPath, req.url))
     }
+    
     return NextResponse.next()
   }
 

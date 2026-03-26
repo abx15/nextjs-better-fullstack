@@ -1,6 +1,7 @@
 import type { NextAuthConfig } from 'next-auth'
 import Google from 'next-auth/providers/google'
 import Credentials from 'next-auth/providers/credentials'
+import type { UserRole } from './lib/rbac'
 
 export const authConfig = {
   providers: [
@@ -28,7 +29,7 @@ export const authConfig = {
   callbacks: {
     async jwt({ token, user, trigger, session }) {
       if (user) {
-        token.role = (user as any).role
+        token.role = (user as any).role as UserRole
         token.id = user.id
       }
       return token
@@ -36,19 +37,10 @@ export const authConfig = {
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string
-        session.user.role = token.role as string
+        session.user.role = token.role as UserRole
       }
       return session
     },
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user
-      const isApiAuthRoute = nextUrl.pathname.startsWith('/api/auth')
-      const isPublicRoute = ['/', '/login', '/register'].includes(nextUrl.pathname)
-
-      if (isApiAuthRoute) return true
-      if (isPublicRoute) return true
-      
-      return isLoggedIn
-    },
+    // Remove authorized callback to let middleware handle all auth logic
   },
 } satisfies NextAuthConfig

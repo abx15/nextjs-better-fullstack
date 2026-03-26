@@ -21,7 +21,7 @@ export default function ApplicationTimeline({
     <div className={cn("w-full", className)}>
       <div className="flex items-center w-full">
         {steps.map((step, index) => (
-          <div key={index} className="flex-1 flex flex-col items-center relative">
+          <div key={`${step.label}-${index}`} className="flex-1 flex flex-col items-center relative">
             {/* Connector line */}
             {index > 0 && (
               <div
